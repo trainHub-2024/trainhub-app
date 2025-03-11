@@ -7,6 +7,7 @@ import FormField from "@/components/ui-project/FormField";
 import { useGlobalContext } from "@/lib/global-provider";
 import { Redirect, router } from "expo-router";
 import { onBoardTrainee, onBoardTrainer } from "@/lib/appwrite";
+import UiLoading from "@/components/ui/Loading";
 
 type FormType = {
     contactNumber: string;
@@ -32,6 +33,11 @@ const Onboarding = () => {
     const [isSubmitting, setSubmitting] = useState(false);
 
     const onSubmit = async () => {
+        if (!form.contactNumber || !form.dob || !form.gender || !form.location) {
+            Alert.alert("Fill up all the necessary fields!")
+            return;
+        }
+
         if (user?.role) {
             setSubmitting(true);
 
@@ -54,6 +60,10 @@ const Onboarding = () => {
 
         }
 
+    }
+
+    if (isSubmitting) {
+        return <UiLoading />
     }
 
     return (
@@ -85,13 +95,25 @@ const Onboarding = () => {
                         handleChangeText={(e) => setForm({ ...form, location: e })}
                         otherStyles='w-full'
                     />
-                    <FormField
-                        title='Gender'
-                        value={form.gender}
-                        placeholder='Enter your gender'
-                        handleChangeText={(e) => setForm({ ...form, gender: e })}
-                        otherStyles='w-full'
-                    />
+                    <View className="flex-row gap-2 justify-center items-center my-4">
+                        {["Male", "Female", "Others"].map((s) => {
+                            const selected = s === form.gender;
+                            return (
+                                <TouchableOpacity
+                                    onPress={() => setForm({ ...form, gender: s })}
+                                    style={{
+                                        backgroundColor: selected ? "#f97316" : "#f4f4f5",
+                                    }}
+                                    key={s} className="flex-1 rounded-full bg-muted text-center justify-center items-center py-2">
+                                    <Text
+                                        style={{
+                                            color: selected ? "white" : "#71717a"
+                                        }}
+                                        className="font-poppinsMedium capitalize">{s}</Text>
+                                </TouchableOpacity>
+                            )
+                        })}
+                    </View>
                     <DatePickerInput
                         title="Date of Birth"
                         date={form.dob}
@@ -104,11 +126,11 @@ const Onboarding = () => {
                             label='Next'
                         />
                     </View>
-                    <TouchableOpacity onPress={() => router.push("/onboarding-schedule")}>
+                    {/* <TouchableOpacity onPress={() => router.push("/onboarding-schedule")}>
                         <View>
                             <Text>Next</Text>
                         </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
             </ScrollView>

@@ -7,6 +7,7 @@ import Button from '@/components/ui-project/Button'
 import { useGlobalContext } from '@/lib/global-provider'
 import { logout, signIn } from '@/lib/appwrite'
 import images from '@/constants/images'
+import UiLoading from '@/components/ui/Loading'
 
 const { width, height } = Dimensions.get("window");
 
@@ -69,6 +70,10 @@ const SignIn = () => {
         } finally {
             setSubmitting(false);
         }
+    }
+
+    if (isSubmitting) {
+        return <UiLoading />
     }
 
     return (

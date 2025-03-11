@@ -28,7 +28,7 @@ const FormField: React.FC<FormFieldProps> = ({
 
             <View className="flex-row items-center justify-between w-full h-16 px-4 border-2 border-muted bg-muted rounded-2xl">
                 <TextInput
-                    className="flex-1 text-lg font-semibold text-left"
+                    className="flex-1 text-lg font-semibold text-left placeholder:text-muted-foreground"
                     value={value}
                     placeholder={placeholder}
                     keyboardType={isNumeric ? "numeric" : "default"} // Use numeric keyboard when needed

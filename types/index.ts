@@ -19,6 +19,9 @@ export type UserProfileType = {
   sports_id: string[];
 
   ratings: any[];
+
+  appointments: any[];
+
 };
 
 export type AppointmentType = {

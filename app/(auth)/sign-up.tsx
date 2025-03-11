@@ -7,6 +7,7 @@ import Button from '@/components/ui-project/Button'
 import { useGlobalContext } from '@/lib/global-provider'
 import { createUser } from '@/lib/appwrite'
 import { UserRoleType } from '@/types'
+import UiLoading from '@/components/ui/Loading'
 
 
 const SignUp = () => {
@@ -52,6 +53,10 @@ const SignUp = () => {
             setSubmitting(false);
         }
 
+    }
+
+    if (isSubmitting) {
+        return <UiLoading />
     }
 
     return (

@@ -34,11 +34,13 @@ const Index = () => {
 
                 {/* BACKGROUND CIRCLE - CENTERED */}
                 <View
-                    className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full -z-10 bg-primary blur-3xl"
+                    className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary blur-3xl"
                     style={{
                         width: width * 0.8, // 80% of screen width
                         height: width * 0.8, // Keep it a circle
-                        top: height / 4,
+                        top: height/2,
+                        left: "60%",
+                        zIndex: -10,
                     }}
                 ></View>
 

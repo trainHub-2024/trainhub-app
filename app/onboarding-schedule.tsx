@@ -15,6 +15,7 @@ import { useAppwrite } from "@/lib/useAppwrite";
 import { getSports } from "@/lib/actions/sports.actions";
 import { ActivityIndicator } from "react-native";
 import SelectMenu from "@/components/ui-project/SelectMenu";
+import UiLoading from "@/components/ui/Loading";
 
 type FormType = {
     trainingPrice: string;
@@ -46,6 +47,10 @@ const OnboardingSchedule = () => {
     const [isSubmitting, setSubmitting] = useState(false);
 
     const onSubmit = async () => {
+        if (!form.trainingPrice || !form.startTime || !form.endTime || form.workDays.length === 0 || form.sports_id.length === 0) {
+            Alert.alert("Please fill up all the necessary details!");
+            return;
+        }
 
         if (user?.role) {
             setSubmitting(true);
@@ -85,6 +90,10 @@ const OnboardingSchedule = () => {
         }
     }
 
+    if (isSubmitting) {
+        return <UiLoading />
+    }
+
     return (
         <SafeAreaView className="flex-1 p-6 bg-white">
             <ScrollView
@@ -101,6 +110,7 @@ const OnboardingSchedule = () => {
                 <View className='justify-center flex-1 gap-2 mt-6'>
                     <FormField
                         title='Price of Training'
+                        isNumeric
                         value={form.trainingPrice}
                         placeholder='Enter your training price'
                         handleChangeText={(e) => setForm({ ...form, trainingPrice: e })}
