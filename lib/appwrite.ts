@@ -1422,7 +1422,7 @@ async function getProfileById({
 type CreateAppointmentProps = {
   user_id: string;
   trainer_id: string;
-  date: string;
+  date: Date;
   notes?: string;
   price: string;
 };

@@ -49,7 +49,7 @@ const Booking = () => {
         try {
             setIsLoading(true);
             const response = await createAppointment({
-                date: final.toISOString(),
+                date: final,
                 trainer_id: trainerId!,
                 user_id: user?.user_id!,
                 price: trainer?.trainingPrice || 0
