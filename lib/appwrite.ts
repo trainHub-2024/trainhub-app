@@ -11,7 +11,7 @@ import {
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
 import { UserRoleType } from "@/types";
-import { endOfDay, startOfDay } from "date-fns";
+import { addDays, endOfDay, startOfDay } from "date-fns";
 import { parseStringify } from "./utils";
 import { Sport } from "@/types/appwrite.types";
 
@@ -34,6 +34,7 @@ export const config = {
   inboxCollectionId: process.env.EXPO_PUBLIC_APPWRITE_INBOX_COLLECTION_ID,
   messageCollectionId: process.env.EXPO_PUBLIC_APPWRITE_MESSAGE_COLLECTION_ID,
   sportCollectionId: process.env.EXPO_PUBLIC_APPWRITE_SPORT_COLLECTION_ID,
+  // notificationsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_NOTIFICATIONS_COLLECTION_ID,
 };
 
 export const client = new Client();
@@ -1196,6 +1197,49 @@ export async function confirmPayment(appointmentId: string) {
   );
 
   return updatedPayment;
+}
+
+export async function getTomorrowAppointments({
+  limit,
+}: {
+  limit?: number;
+}) {
+  try {
+    console.log("fetch tomorrow appointments...");
+    const user = await getCurrentUser();
+
+    if (!user?.profile_id) {
+      throw new Error("Profile not found");
+    }
+
+    const buildQuery: any[] = [
+      Query.orderDesc("date"),
+      Query.equal("status", "confirmed"),
+      Query.equal("userProfile_id", user.profile_id.$id),
+      Query.and([
+        Query.greaterThanEqual(
+          "date",
+          startOfDay(addDays(new Date(), 1)).toISOString()
+        ),
+        Query.lessThanEqual("date", endOfDay(addDays(new Date(), 1)).toISOString()),
+      ])
+    ];
+
+    console.log(buildQuery);
+
+    if (limit) buildQuery.push(Query.limit(limit));
+
+    const result = await databases.listDocuments(
+      config.databaseId!,
+      config.appointmentCollectionId!,
+      buildQuery
+    );
+
+    return result.documents || [];
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 }
 
 export async function getPaidAppointments({

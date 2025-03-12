@@ -1,17 +1,14 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/lib/global-provider";
-import icons from "@/constants/icons";
-import { router, useLocalSearchParams } from "expo-router";
-import { useAppwrite } from "@/lib/useAppwrite";
-import { getUserAppointments, getUserUpcomingAppointments } from "@/lib/appwrite";
+
 import { mapIdToNumber, ParseTime } from "@/lib/utils";
 import UpcomingAppointments from "./UpcomingAppointments";
 import CompletedAppointments from "./CompletedAppointments";
-import { SafeAreaView } from "react-native-safe-area-context";
 import TraineeHeader from "./_components/trainee-header";
 import images from "@/constants/images";
 import DisplayCalendar from "./_components/trainee-display-calendar";
+import UpcomingToast from "./_components/upcoming-toast";
 
 const HomeTraineeMain = () => {
     const { user } = useGlobalContext();
@@ -30,6 +27,7 @@ const HomeTraineeMain = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-white">
+            <UpcomingToast />
             <ScrollView showsVerticalScrollIndicator={false} className="px-7" contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}>
                 {/* Header */}
                 <TraineeHeader />
