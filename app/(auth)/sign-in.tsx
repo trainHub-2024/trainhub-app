@@ -123,7 +123,7 @@ const SignIn = () => {
                                     <FormField
                                         title='Password'
                                         value={form.password}
-                                        placeholder='Enter your email'
+                                        placeholder='Enter your password'
                                         handleChangeText={(e) => setForm({ ...form, password: e })}
                                         otherStyles='w-full'
                                     />

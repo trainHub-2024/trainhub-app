@@ -232,7 +232,7 @@ const Appointment = () => {
                     <Text className="text-lg font-semibold">Trainer</Text>
                     <Text className="text-base text-gray-600">Name: {appointment.trainerProfile?.name}</Text>
                     <Text className="text-base text-gray-600">Location: {appointment.trainerProfile?.location}</Text>
-                    {appointment?.status === "confirmed" && (
+                    {appointment?.status === "confirmed" || appointment?.status === "completed" && (
                         <Text className="text-base text-gray-600">Contact: {appointment.trainerProfile?.contactNumber}</Text>
                     )}
                 </View>
@@ -242,7 +242,7 @@ const Appointment = () => {
                     <Text className="text-lg font-semibold">Trainee</Text>
                     <Text className="text-base text-gray-600">Name: {appointment.userProfile?.name}</Text>
                     <Text className="text-base text-gray-600">Location: {appointment.userProfile?.location}</Text>
-                    {appointment?.status === "confirmed" && (
+                    {appointment?.status === "confirmed" || appointment?.status === "completed" && (
                         <Text className="text-base text-gray-600">Contact: {appointment.userProfile?.contactNumber}</Text>
                     )}
                 </View>

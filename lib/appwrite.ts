@@ -273,6 +273,7 @@ export async function onBoardTrainer({
         dob,
         name: user?.name,
         user_id: user?.user_id,
+        score: 0,
       }
     );
 
