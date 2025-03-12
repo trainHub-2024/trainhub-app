@@ -468,6 +468,7 @@ export async function createAppointment({
   notes,
   user_id,
   trainer_id,
+  timeSlot
 }: CreateAppointmentProps) {
   try {
     // Fetch trainer and current user
@@ -479,17 +480,19 @@ export async function createAppointment({
     }
 
     // Ensure date is stored as ISO string
-    const appointmentDate = new Date(date).toISOString();
+    // const appointmentDate = new Date(date)
     const body = {
-      date: appointmentDate,
+      date,
       price: trainer?.trainerProfile_id.trainingPrice,
       notes: "",
       trainerProfile_id: trainer?.trainerProfile_id.$id,
       userProfile_id: currentUser?.userProfile_id.$id,
+      timeSlot
     };
 
     console.log("BOOKING....");
     console.log(body);
+    console.log("BOOOKING--------------------------------")
 
     console.log(currentUser.userProfile_id);
 
@@ -707,16 +710,30 @@ export async function getAppointmentById({ id }: { id: string }) {
 export async function updateStatusAppointmentById({
   id,
   status,
+  location,
 }: {
   id: string;
   status: string;
+  location?: string;
 }) {
   try {
     if (status === "completed") {
       return completeAppointmentById({ id });
     } else if (status === "cancelled") {
       return cancelAppointmentById({ id });
-    } else {
+    } else if (status === "confirmed" && location) {
+      const result = await databases.updateDocument(
+        config.databaseId!,
+        config.appointmentCollectionId!,
+        id,
+        {
+          status,
+          venue: location
+        }
+      );
+      return result;
+    }
+    else {
       const result = await databases.updateDocument(
         config.databaseId!,
         config.appointmentCollectionId!,
@@ -1422,9 +1439,10 @@ async function getProfileById({
 type CreateAppointmentProps = {
   user_id: string;
   trainer_id: string;
-  date: string;
+  date: Date;
   notes?: string;
   price: string;
+  timeSlot: string;
 };
 type CreateUserProps = {
   email: string;

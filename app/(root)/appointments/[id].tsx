@@ -72,15 +72,31 @@ const Appointment = () => {
                 {
                     text: "Yes, Confirm",
                     onPress: async () => {
-                        try {
-                            setIsLoading(true);
-                            await updateStatusAppointmentById({ id: id!, status: "confirmed" }); // Call the cancellation function
-                            router.replace("/explore"); // Navigate back after cancellation
-                        } catch (error) {
-                            Alert.alert("Error", "Failed to confirm appointment. Please try again.");
-                        } finally {
-                            setIsLoading(false);
-                        }
+                        Alert.prompt(
+                            "Enter Location",
+                            "Please enter the location or venue for the appointment:",
+                            [
+                                {
+                                    text: "Cancel",
+                                    style: "cancel",
+                                },
+                                {
+                                    text: "OK",
+                                    onPress: async (location) => {
+                                        try {
+                                            setIsLoading(true);
+                                            await updateStatusAppointmentById({ id: id!, status: "confirmed", location }); // Pass the location
+                                            router.replace("/explore"); // Navigate back after confirmation
+                                        } catch (error) {
+                                            Alert.alert("Error", "Failed to confirm appointment. Please try again.");
+                                        } finally {
+                                            setIsLoading(false);
+                                        }
+                                    },
+                                },
+                            ],
+                            "plain-text"
+                        );
                     },
                 },
             ]
@@ -202,8 +218,13 @@ const Appointment = () => {
                 {/* Appointment Details */}
                 <View className="p-4 mb-4 bg-gray-100 rounded-lg">
                     <Text className="text-lg font-semibold uppercase">Status: {appointment.status}</Text>
-                    <Text className="text-base text-gray-600">Date: {new Date(appointment.date).toLocaleString()}</Text>
+                    <Text className="text-base text-gray-600">
+                        Date: {new Date(appointment.date).toLocaleDateString()} - {appointment?.timeSlot}
+                    </Text>
                     <Text className="text-base text-gray-600">Price: {appointment.price}</Text>
+                    {appointment?.venue && (
+                        <Text className="text-base text-gray-600">Venue: {appointment.venue}</Text>
+                    )}
                 </View>
 
                 {/* Trainer Details */}
@@ -211,7 +232,9 @@ const Appointment = () => {
                     <Text className="text-lg font-semibold">Trainer</Text>
                     <Text className="text-base text-gray-600">Name: {appointment.trainerProfile?.name}</Text>
                     <Text className="text-base text-gray-600">Location: {appointment.trainerProfile?.location}</Text>
-                    <Text className="text-base text-gray-600">Contact: {appointment.trainerProfile?.contactNumber}</Text>
+                    {appointment?.status === "confirmed" && (
+                        <Text className="text-base text-gray-600">Contact: {appointment.trainerProfile?.contactNumber}</Text>
+                    )}
                 </View>
 
                 {/* User Details */}
@@ -219,7 +242,9 @@ const Appointment = () => {
                     <Text className="text-lg font-semibold">Trainee</Text>
                     <Text className="text-base text-gray-600">Name: {appointment.userProfile?.name}</Text>
                     <Text className="text-base text-gray-600">Location: {appointment.userProfile?.location}</Text>
-                    <Text className="text-base text-gray-600">Contact: {appointment.userProfile?.contactNumber}</Text>
+                    {appointment?.status === "confirmed" && (
+                        <Text className="text-base text-gray-600">Contact: {appointment.userProfile?.contactNumber}</Text>
+                    )}
                 </View>
 
                 {/* Buttons */}

@@ -26,7 +26,7 @@ const UpcomingCard = ({ item }: { item: Appointment }) => {
                 <View>
                     <Text className="text-lg font-poppinsSemiBold">{new Date(item.date).toDateString()}</Text>
                     <Text className="text-sm font-poppins">
-                        {ParseTime(new Date(item.date))}
+                        {item?.timeSlot}
                         {/* {
                             item?.rating?.rating && <Text className=""> Rating: {item?.rating?.rating}</Text>
                         } */}

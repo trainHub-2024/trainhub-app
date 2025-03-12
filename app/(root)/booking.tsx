@@ -7,7 +7,7 @@ import { createAppointment, getTrainerById } from "@/lib/appwrite";
 import Button from "@/components/ui-project/Button";
 import { useGlobalContext } from "@/lib/global-provider";
 import { ParseTime } from "@/lib/utils";
-import { parse, setHours, setMinutes, setSeconds, setMilliseconds } from "date-fns";
+import { parse, setHours, setMinutes, setSeconds, setMilliseconds, addDays } from "date-fns";
 
 const Booking = () => {
     const { user } = useGlobalContext();
@@ -25,8 +25,10 @@ const Booking = () => {
     });
 
     const combineDateAndTime = (date: Date, timeString: string): Date => {
+        // Parse the time string into a Date object
         const parsedTime = parse(timeString, "h:mm a", new Date());
 
+        // Normalize the time to the provided date while ensuring UTC consistency
         return setMilliseconds(
             setSeconds(
                 setMinutes(
@@ -44,19 +46,23 @@ const Booking = () => {
             return Alert.alert("Invalid date or timeslot!");
         }
 
-        const final = combineDateAndTime(new Date(selectedDate), timeslot!);
+        // const final = combineDateAndTime(new Date(selectedDate), timeslot!);
 
         try {
             setIsLoading(true);
-            const response = await createAppointment({
-                date: final.toISOString(),
+            const body = {
+                date: new Date(selectedDate),
                 trainer_id: trainerId!,
                 user_id: user?.user_id!,
-                price: trainer?.trainingPrice || 0
-            });
+                price: trainer?.trainingPrice || 0,
+                timeSlot: timeslot
+            };
+
+            console.log(body)
+            const response = await createAppointment(body);
 
             if (response) {
-                Alert.alert(`Successfully Booked for ${ParseTime(final)} on ${final.toDateString()}!`);
+                Alert.alert(`Successfully Booked!`);
                 router.push("/home");
             } else {
                 Alert.alert("Failed to book. Please try again.");
