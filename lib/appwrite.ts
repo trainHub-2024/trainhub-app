@@ -167,6 +167,7 @@ export async function createUser({
   username,
   password,
   role,
+  contactNumber
 }: CreateUserProps) {
   try {
     const accountId = ID.unique();
@@ -174,12 +175,14 @@ export async function createUser({
       accountId,
       email,
       password,
-      username
+      username,
     );
 
     if (!newAccount) throw Error;
 
     const avatarUrl = avatars.getInitials(username);
+
+
 
     await signIn({ email, password });
 
@@ -196,10 +199,29 @@ export async function createUser({
       }
     );
 
+    // Update the user's phone number
+    await account.updatePhone(contactNumber, password);
+
+    // Send phone verification code
+    const result = await account.createPhoneVerification();
+
+
     return newUser;
   } catch (error: any) {
     throw new Error(error);
   }
+}
+
+export async function verifyPhone(code: string) {
+  const user = await account.get();
+
+  if (!user) {
+    console.log("error");
+    return;
+  }
+
+  await account.updatePhoneVerification(user?.$id, code);
+  return "Success";
 }
 
 export async function signIn({ email, password }: SignInProps) {
@@ -228,7 +250,7 @@ export async function onBoardTrainee({
       config.userProfileCollectionId!,
       ID.unique(),
       {
-        contactNumber,
+        contactNumber: user?.phone,
         gender,
         location,
         dob,
@@ -1493,6 +1515,7 @@ type CreateUserProps = {
   email: string;
   username: string;
   password: string;
+  contactNumber: string;
   role: UserRoleType;
 };
 type CreateRatingProps = {

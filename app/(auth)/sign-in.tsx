@@ -137,6 +137,9 @@ const SignIn = () => {
                                     <TouchableOpacity className='mt-4' onPress={() => router.push("/sign-up")}>
                                         <Text className='font-medium text-center underline text-primary'>Don&apos;t have an account yet?</Text>
                                     </TouchableOpacity>
+                                    {/* <TouchableOpacity onPress={() => logout()}>
+                                        <Text>Logout</Text>
+                                    </TouchableOpacity> */}
                                 </View>
                             </View>
                         </ScrollView>

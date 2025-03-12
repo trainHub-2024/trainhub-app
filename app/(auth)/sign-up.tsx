@@ -1,62 +1,75 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native'
-import React, { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router'
-import FormField from '@/components/ui-project/FormField'
-import Button from '@/components/ui-project/Button'
-import { useGlobalContext } from '@/lib/global-provider'
-import { createUser } from '@/lib/appwrite'
-import { UserRoleType } from '@/types'
-import UiLoading from '@/components/ui/Loading'
-
+import { View, Text, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+import FormField from '@/components/ui-project/FormField';
+import Button from '@/components/ui-project/Button';
+import { useGlobalContext } from '@/lib/global-provider';
+import { createUser } from '@/lib/appwrite';
+import { UserRoleType } from '@/types';
+import UiLoading from '@/components/ui/Loading';
 
 const SignUp = () => {
     const { refetch } = useGlobalContext();
     const [isSubmitting, setSubmitting] = useState(false);
 
-    const [form, setForm] = useState<{ username: string, email: string, password: string, role: UserRoleType }>({
+    const [form, setForm] = useState<{ username: string, email: string, password: string, role: UserRoleType; contactNumber: string }>({
         username: "",
         email: "",
         password: "",
-        role: "trainee"
+        role: "trainee",
+        contactNumber: "",
     });
 
     function handleChangeRole(newRole: "trainee" | "trainer") {
-        setForm((prev) => ({ ...prev, role: newRole }))
+        setForm((prev) => ({ ...prev, role: newRole }));
     }
 
-    const onSubmit = async () => {
+    const isValidPhoneNumber = (phoneNumber: string) => {
+        const phoneRegex = /^\+63\d{10}$/;
+        return phoneRegex.test(phoneNumber);
+    };
 
-        if (!form.email || !form.password || !form.username || !form.role) {
+    const onSubmit = async () => {
+        if (!form.email || !form.password || !form.username || !form.role || !form.contactNumber) {
             Alert.alert("Error", "Please fill in all fields");
             return;
         }
 
+        const validForm = {
+            ...form,
+            contactNumber: "+63" + form.contactNumber
+
+        }
+
+        if (!isValidPhoneNumber(validForm.contactNumber)) {
+            Alert.alert("Error", "Please enter a valid phone number with +63 country code");
+            return;
+        }
 
         setSubmitting(true);
 
         try {
-            const result = await createUser(form)
+            const result = await createUser(validForm);
 
             if (result) {
-                Alert.alert("Registered successfully")
+                Alert.alert("Registered successfully");
                 refetch();
-                router.replace("/onboarding");
+                router.replace("/verification");
             } else {
                 throw new Error("Registration failed");
             }
 
-            router.replace("/home")
+            // router.replace("/home");
         } catch (error: any) {
             Alert.alert("Error", error.message);
         } finally {
             setSubmitting(false);
         }
-
-    }
+    };
 
     if (isSubmitting) {
-        return <UiLoading />
+        return <UiLoading />;
     }
 
     return (
@@ -82,24 +95,24 @@ const SignUp = () => {
                         <View className='flex-row items-center justify-center w-full gap-2'>
                             <TouchableOpacity
                                 className={`py-2 border rounded-full flex-1 flex justify-center items-center
-                            ${form.role === "trainee" ? "bg-primary border-primary" : "bg-white"}
-                                `}
+                ${form.role === "trainee" ? "bg-primary border-primary" : "bg-white"}
+                `}
                                 onPress={() => handleChangeRole("trainee")}>
                                 <Text
                                     className={`font-poppins text-lg text-center 
-                                    ${form.role === "trainee" ? "text-white" : ""} `}
+                  ${form.role === "trainee" ? "text-white" : ""} `}
                                 >
                                     Trainee
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 className={`py-2 border rounded-full flex-1 flex justify-center items-center
-                            ${form.role === "trainer" ? "bg-primary border-primary" : "bg-white"}
-                                `}
+                ${form.role === "trainer" ? "bg-primary border-primary" : "bg-white"}
+                `}
                                 onPress={() => handleChangeRole("trainer")}>
                                 <Text
                                     className={`font-poppins text-lg text-center 
-                                    ${form.role === "trainer" ? "text-white" : ""} `}
+                  ${form.role === "trainer" ? "text-white" : ""} `}
                                 >
                                     Trainer
                                 </Text>
@@ -123,9 +136,17 @@ const SignUp = () => {
                                 keyboardType='email-address'
                             />
                             <FormField
+                                isNumeric={true}
+                                title='Contact Number'
+                                value={form.contactNumber}
+                                placeholder='+63xxxxxxxxxx'
+                                handleChangeText={(e) => setForm({ ...form, contactNumber: e })}
+                                otherStyles='w-full'
+                            />
+                            <FormField
                                 title='Password'
                                 value={form.password}
-                                placeholder='Enter your email'
+                                placeholder='Enter your password'
                                 handleChangeText={(e) => setForm({ ...form, password: e })}
                                 otherStyles='w-full'
                             />
@@ -145,8 +166,8 @@ const SignUp = () => {
 
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView >
-    )
-}
+        </SafeAreaView>
+    );
+};
 
-export default SignUp
+export default SignUp;

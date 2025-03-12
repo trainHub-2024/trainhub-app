@@ -33,7 +33,7 @@ const Onboarding = () => {
     const [isSubmitting, setSubmitting] = useState(false);
 
     const onSubmit = async () => {
-        if (!form.contactNumber || !form.dob || !form.gender || !form.location) {
+        if ( !form.dob || !form.gender || !form.location) {
             Alert.alert("Fill up all the necessary fields!")
             return;
         }
@@ -80,14 +80,14 @@ const Onboarding = () => {
                 </View>
 
                 <View className='justify-center flex-1 gap-2'>
-                    <FormField
+                    {/* <FormField
                         isNumeric={true}
                         title='Contact Number'
                         value={form.contactNumber}
                         placeholder='Enter your contact number'
                         handleChangeText={(e) => setForm({ ...form, contactNumber: e })}
                         otherStyles='w-full'
-                    />
+                    /> */}
                     <FormField
                         title='Location'
                         value={form.location}
