@@ -13,7 +13,7 @@ import { openAuthSessionAsync } from "expo-web-browser";
 import { UserRoleType } from "@/types";
 import { addDays, endOfDay, startOfDay } from "date-fns";
 import { parseStringify } from "./utils";
-import { Sport } from "@/types/appwrite.types";
+import { Appointment, Sport } from "@/types/appwrite.types";
 
 export const config = {
   platform: "com.trainhub",
@@ -465,7 +465,8 @@ export async function getTrainerById({ id }: { id: string }) {
       config.userCollectionId!,
       id
     );
-    return result;
+
+    return result
   } catch (error) {
     console.error(error);
     return null;
@@ -717,14 +718,33 @@ export async function getUserCompletedAppointments({
   }
 }
 
-export async function getAppointmentById({ id }: { id: string }) {
+export async function getAppointmentById({ id }: { id: string }): Promise<Appointment | any> {
   try {
     const result = await databases.getDocument(
       config.databaseId!,
       config.appointmentCollectionId!,
       id
     );
-    return result;
+
+    if (!result) {
+      throw new Error("Appointment not found!")
+    }
+
+    let sports = []
+
+
+    if (result?.trainerProfile?.sports_id && result?.trainerProfile?.sports_id.length > 0) {
+      const sport = await getSportById({ id: result?.trainerProfile?.sports_id[0] });
+
+      if (sport) {
+        sports.push(sport);
+      }
+    }
+
+    const avatarTrainer = await getTrainerById({ id: result?.trainerProfile?.user_id })
+    const avatarUser = await getUserById({ id: result?.userProfile?.user_id })
+
+    return { ...result, sports, trainerProfile: avatarTrainer, userProfile: avatarUser };
   } catch (error) {
     console.error(error);
     return null;
@@ -735,14 +755,16 @@ export async function updateStatusAppointmentById({
   id,
   status,
   location,
+  duration
 }: {
   id: string;
   status: string;
   location?: string;
+  duration?: number;
 }) {
   try {
-    if (status === "completed") {
-      return completeAppointmentById({ id });
+    if (status === "completed" && (duration ?? 0) > 0 && duration) {
+      return completeAppointmentById({ id, duration });
     } else if (status === "cancelled") {
       return cancelAppointmentById({ id });
     } else if (status === "confirmed" && location) {
@@ -774,7 +796,7 @@ export async function updateStatusAppointmentById({
   }
 }
 
-async function completeAppointmentById({ id }: { id: string }) {
+async function completeAppointmentById({ id, duration }: { id: string; duration: number }) {
   try {
     // Get the current logged-in user (trainer)
     const currentUser = await getCurrentUser();
@@ -792,6 +814,7 @@ async function completeAppointmentById({ id }: { id: string }) {
       id,
       {
         status: "completed",
+        duration: Math.floor(duration)
       }
     );
 

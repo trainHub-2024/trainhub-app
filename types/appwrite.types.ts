@@ -16,4 +16,5 @@ export interface Appointment extends Models.Document {
   isConfirmedPayment: boolean;
   paymentMethod: "online" | "cash";
   timeSlot?: string;
+  duration?: number;
 }

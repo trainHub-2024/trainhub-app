@@ -1,3 +1,5 @@
+import { Sport } from "./appwrite.types";
+
 export type UserRoleType = "trainer" | "trainee";
 export type UserProfileType = {
   $id: string;
@@ -22,6 +24,13 @@ export type UserProfileType = {
 
   appointments: any[];
 
+  avatar?: any
+  sports: Sport[]
+
+  username: string;
+
+  userProfile_id?:any;
+  trainerProfile_id?:any;
 };
 
 export type AppointmentType = {
