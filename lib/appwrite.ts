@@ -123,13 +123,13 @@ export async function getCurrentUser() {
       profile_id: userDocument?.userProfile_id
         ? userDocument.userProfile_id
         : userDocument?.trainerProfile_id
-          ? userDocument?.trainerProfile_id
-          : null,
+        ? userDocument?.trainerProfile_id
+        : null,
       profile: userDocument?.userProfile_id
         ? userDocument.userProfile_id
         : userDocument?.trainerProfile_id
-          ? userDocument?.trainerProfile_id
-          : null,
+        ? userDocument?.trainerProfile_id
+        : null,
     };
   } catch (error) {
     console.log(error);
@@ -167,7 +167,7 @@ export async function createUser({
   username,
   password,
   role,
-  contactNumber
+  contactNumber,
 }: CreateUserProps) {
   try {
     const accountId = ID.unique();
@@ -175,14 +175,12 @@ export async function createUser({
       accountId,
       email,
       password,
-      username,
+      username
     );
 
     if (!newAccount) throw Error;
 
     const avatarUrl = avatars.getInitials(username);
-
-
 
     await signIn({ email, password });
 
@@ -204,7 +202,6 @@ export async function createUser({
 
     // Send phone verification code
     const result = await account.createPhoneVerification();
-
 
     return newUser;
   } catch (error: any) {
@@ -466,7 +463,7 @@ export async function getTrainerById({ id }: { id: string }) {
       id
     );
 
-    return result
+    return result;
   } catch (error) {
     console.error(error);
     return null;
@@ -493,7 +490,7 @@ export async function createAppointment({
   notes,
   user_id,
   trainer_id,
-  timeSlot
+  timeSlot,
 }: CreateAppointmentProps) {
   try {
     // Fetch trainer and current user
@@ -512,12 +509,12 @@ export async function createAppointment({
       notes: "",
       trainerProfile_id: trainer?.trainerProfile_id.$id,
       userProfile_id: currentUser?.userProfile_id.$id,
-      timeSlot
+      timeSlot,
     };
 
     console.log("BOOKING....");
     console.log(body);
-    console.log("BOOOKING--------------------------------")
+    console.log("BOOOKING--------------------------------");
 
     console.log(currentUser.userProfile_id);
 
@@ -718,7 +715,11 @@ export async function getUserCompletedAppointments({
   }
 }
 
-export async function getAppointmentById({ id }: { id: string }): Promise<Appointment | any> {
+export async function getAppointmentById({
+  id,
+}: {
+  id: string;
+}): Promise<Appointment | any> {
   try {
     const result = await databases.getDocument(
       config.databaseId!,
@@ -727,24 +728,35 @@ export async function getAppointmentById({ id }: { id: string }): Promise<Appoin
     );
 
     if (!result) {
-      throw new Error("Appointment not found!")
+      throw new Error("Appointment not found!");
     }
 
-    let sports = []
+    let sports = [];
 
-
-    if (result?.trainerProfile?.sports_id && result?.trainerProfile?.sports_id.length > 0) {
-      const sport = await getSportById({ id: result?.trainerProfile?.sports_id[0] });
+    if (
+      result?.trainerProfile?.sports_id &&
+      result?.trainerProfile?.sports_id.length > 0
+    ) {
+      const sport = await getSportById({
+        id: result?.trainerProfile?.sports_id[0],
+      });
 
       if (sport) {
         sports.push(sport);
       }
     }
 
-    const avatarTrainer = await getTrainerById({ id: result?.trainerProfile?.user_id })
-    const avatarUser = await getUserById({ id: result?.userProfile?.user_id })
+    const avatarTrainer = await getTrainerById({
+      id: result?.trainerProfile?.user_id,
+    });
+    const avatarUser = await getUserById({ id: result?.userProfile?.user_id });
 
-    return { ...result, sports, trainerProfile: avatarTrainer, userProfile: avatarUser };
+    return {
+      ...result,
+      sports,
+      trainerProfile: avatarTrainer,
+      userProfile: avatarUser,
+    };
   } catch (error) {
     console.error(error);
     return null;
@@ -755,7 +767,7 @@ export async function updateStatusAppointmentById({
   id,
   status,
   location,
-  duration
+  duration,
 }: {
   id: string;
   status: string;
@@ -774,12 +786,11 @@ export async function updateStatusAppointmentById({
         id,
         {
           status,
-          venue: location
+          venue: location,
         }
       );
       return result;
-    }
-    else {
+    } else {
       const result = await databases.updateDocument(
         config.databaseId!,
         config.appointmentCollectionId!,
@@ -796,7 +807,13 @@ export async function updateStatusAppointmentById({
   }
 }
 
-async function completeAppointmentById({ id, duration }: { id: string; duration: number }) {
+async function completeAppointmentById({
+  id,
+  duration,
+}: {
+  id: string;
+  duration: number;
+}) {
   try {
     // Get the current logged-in user (trainer)
     const currentUser = await getCurrentUser();
@@ -814,7 +831,7 @@ async function completeAppointmentById({ id, duration }: { id: string; duration:
       id,
       {
         status: "completed",
-        duration: Math.floor(duration)
+        duration: Math.floor(duration),
       }
     );
 
@@ -1244,11 +1261,7 @@ export async function confirmPayment(appointmentId: string) {
   return updatedPayment;
 }
 
-export async function getTomorrowAppointments({
-  limit,
-}: {
-  limit?: number;
-}) {
+export async function getTomorrowAppointments({ limit }: { limit?: number }) {
   try {
     console.log("fetch tomorrow appointments...");
     const user = await getCurrentUser();
@@ -1266,8 +1279,11 @@ export async function getTomorrowAppointments({
           "date",
           startOfDay(addDays(new Date(), 1)).toISOString()
         ),
-        Query.lessThanEqual("date", endOfDay(addDays(new Date(), 1)).toISOString()),
-      ])
+        Query.lessThanEqual(
+          "date",
+          endOfDay(addDays(new Date(), 1)).toISOString()
+        ),
+      ]),
     ];
 
     console.log(buildQuery);
@@ -1305,7 +1321,7 @@ export async function getPaidAppointments({
     }
 
     const buildQuery: any[] = [
-      Query.orderDesc("paymentDate"),
+      Query.orderDesc("$updatedAt"),
       Query.equal("isConfirmedPayment", true),
       Query.equal("trainerProfile_id", user.profile_id.$id),
     ];
@@ -1317,6 +1333,9 @@ export async function getPaidAppointments({
       config.appointmentCollectionId!,
       buildQuery
     );
+
+    console.log("PAID APPOINTMENTSSS");
+    console.log(result);
 
     return result.documents || [];
   } catch (error) {

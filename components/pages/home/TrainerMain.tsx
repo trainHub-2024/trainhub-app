@@ -2,11 +2,25 @@ import { View, Text, Image, SafeAreaView } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useGlobalContext } from '@/lib/global-provider';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useAppwrite } from '@/lib/useAppwrite';
+import { getPaidAppointments } from '@/lib/appwrite';
+import { computeTrainerIncome } from '@/lib/utils';
 
 const HomeTrainerMain = () => {
     const { user } = useGlobalContext();
     console.log(user?.profile.score);
     const trainerScore = (user?.profile.score ?? 0);
+
+    const {
+        data,
+        refetch,
+        loading,
+    } = useAppwrite({
+        fn: getPaidAppointments,
+        // skip: true,
+    });
+
+
 
 
     const rating = useMemo(() => {
@@ -17,6 +31,10 @@ const HomeTrainerMain = () => {
     }, [user]);
 
     console.log(rating)
+
+    const totalEarnings = useMemo(() => {
+        return data?.reduce((sum, appointment) => sum + computeTrainerIncome(appointment as any), 0) ?? 0;
+    }, [data]);
 
 
     // Temporary dataset (can be replaced with real API data)
@@ -29,22 +47,23 @@ const HomeTrainerMain = () => {
 
     return (
         <SafeAreaView className='flex-1 h-full bg-muted'>
-            <View className='w-full flex-row gap-4 justify-start items-center px-7 py-4 bg-white'>
-                <View className='border-2 border-primary-light rounded-full'>
-                    <Image src={user?.avatar} className="w-12 h-12 rounded-full border border-white" />
+            <View className='flex-row items-center justify-start w-full gap-4 py-4 bg-white px-7'>
+                <View className='border-2 rounded-full border-primary-light'>
+                    <Image src={user?.avatar} className="w-12 h-12 border border-white rounded-full" />
                 </View>
-                <Text className='font-poppinsMedium text-2xl text-primary'>Hello, {user?.name}</Text>
+                <Text className='text-2xl font-poppinsMedium text-primary'>Hello, {user?.name}</Text>
             </View>
-            <View className='px-7 flex-row py-4 gap-2'>
-                <View className='flex-1 rounded-xl bg-primary-light p-4 gap-2'>
-                    <Text className='font-poppins text-xl'>Level</Text>
-                    <Text className='text-4xl font-poppinsBold text-left'>{level}</Text>
+            <View className='flex-row gap-2 py-4 px-7'>
+                <View className='flex-1 gap-2 p-4 rounded-xl bg-primary-light'>
+                    <Text className='text-xl font-poppins'>Level</Text>
+                    <Text className='text-4xl text-left font-poppinsBold'>{level}</Text>
                     <Text className='text-sm font-poppins'>
                         {Math.floor(progress * 5)}/5 completed for next level
                     </Text>
                 </View>
-                <View className='flex-1 rounded-xl bg-secondary p-4 gap-2'>
-                    <Text className='font-poppins text-xl'>Earnings</Text>
+                <View className='flex-1 gap-2 p-4 rounded-xl bg-secondary'>
+                    <Text className='text-xl font-poppins'>Earnings</Text>
+                    <Text className='text-4xl text-left font-poppinsBold'>₱{totalEarnings}</Text>
                 </View>
             </View>
         </SafeAreaView>

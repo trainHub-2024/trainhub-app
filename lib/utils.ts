@@ -1,3 +1,5 @@
+import { Appointment } from "@/types/appwrite.types";
+
 export const ParseTime = (date: Date) => {
   return date?.toLocaleTimeString([], {
     hour: "2-digit",
@@ -22,4 +24,22 @@ export function mapIdToNumber(id: string): number {
 
 export function formatTimeRange(startTime: Date, endTime: Date): string {
   return `${ParseTime(new Date(startTime))} - ${ParseTime(new Date(endTime))}`;
+}
+
+export function computeTrainerIncome(data: Appointment) {
+  const duration = data.duration ?? 1;
+  const COMMISSIONS: any = {
+    1: 0.25,
+    2: 0.3,
+    3: 0.35,
+    4: 0.4,
+    default: 0.4,
+  };
+
+  const rate = COMMISSIONS[duration] ?? COMMISSIONS.default;
+  const session_fee = duration * data.price;
+  const commission_fee = session_fee * rate;
+  const transaction_fee = 25;
+
+  return session_fee - commission_fee - transaction_fee;
 }
