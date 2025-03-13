@@ -13,196 +13,196 @@ import PaymentDetails from "./_components/payment-details";
 import AppointmentButtons from "./_components/buttons";
 
 const Appointment = () => {
-    const { user, refetch } = useGlobalContext();
+    // const { user, refetch } = useGlobalContext();
     const { id } = useLocalSearchParams<{ id?: string }>();
-    const router = useRouter();
+    // const router = useRouter();
     const { data: appointment, loading, refetch: refetchAppointment } = useAppwrite({
         fn: getAppointmentById,
         params: { id: id! },
     });
 
 
-    const trainerProfileId = appointment?.trainerProfile?.$id ?? "";
-    const userProfileId = appointment?.userProfile?.$id ?? "";
+    // const trainerProfileId = appointment?.trainerProfile?.$id ?? "";
+    // const userProfileId = appointment?.userProfile?.$id ?? "";
 
-    const isPaid: boolean = appointment?.paymentDate ? true : false;
-    const hasConfirmedPayment: boolean = appointment?.isConfirmedPayment ? appointment?.isConfirmedPayment : false
+    // const isPaid: boolean = appointment?.paymentDate ? true : false;
+    // const hasConfirmedPayment: boolean = appointment?.isConfirmedPayment ? appointment?.isConfirmedPayment : false
 
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
-    const handleCancel = async () => {
-        Alert.alert(
-            "Cancel Appointment",
-            "Are you sure you want to cancel this appointment?",
-            [
-                {
-                    text: "No",
-                    style: "cancel",
-                },
-                {
-                    text: "Yes, Cancel",
-                    onPress: async () => {
-                        try {
-                            setIsLoading(true);
-                            await updateStatusAppointmentById({ id: id!, status: "cancelled" }); // Call the cancellation function
-                            Alert.alert("Cancelled appointment!");
-                            refetch();
-                            router.replace("/explore"); // Navigate back after cancellation
-                        } catch (error) {
-                            Alert.alert("Error", "Failed to cancel appointment. Please try again.");
-                        } finally {
-                            setIsLoading(false);
-                        }
-                    },
-                },
-            ]
-        );
-    };
+    // const handleCancel = async () => {
+    //     Alert.alert(
+    //         "Cancel Appointment",
+    //         "Are you sure you want to cancel this appointment?",
+    //         [
+    //             {
+    //                 text: "No",
+    //                 style: "cancel",
+    //             },
+    //             {
+    //                 text: "Yes, Cancel",
+    //                 onPress: async () => {
+    //                     try {
+    //                         setIsLoading(true);
+    //                         await updateStatusAppointmentById({ id: id!, status: "cancelled" }); // Call the cancellation function
+    //                         Alert.alert("Cancelled appointment!");
+    //                         refetch();
+    //                         router.replace("/explore"); // Navigate back after cancellation
+    //                     } catch (error) {
+    //                         Alert.alert("Error", "Failed to cancel appointment. Please try again.");
+    //                     } finally {
+    //                         setIsLoading(false);
+    //                     }
+    //                 },
+    //             },
+    //         ]
+    //     );
+    // };
 
-    const handleConfirm = async () => {
-        Alert.alert(
-            "Confirm Appointment",
-            "Are you sure you want to confirm this appointment?",
-            [
-                {
-                    text: "No",
-                    style: "cancel",
-                },
-                {
-                    text: "Yes, Confirm",
-                    onPress: async () => {
-                        Alert.prompt(
-                            "Enter Location",
-                            "Please enter the location or venue for the appointment:",
-                            [
-                                {
-                                    text: "Cancel",
-                                    style: "cancel",
-                                },
-                                {
-                                    text: "OK",
-                                    onPress: async (location) => {
-                                        try {
-                                            setIsLoading(true);
-                                            await updateStatusAppointmentById({ id: id!, status: "confirmed", location }); // Pass the location
-                                            router.replace("/explore"); // Navigate back after confirmation
-                                        } catch (error) {
-                                            Alert.alert("Error", "Failed to confirm appointment. Please try again.");
-                                        } finally {
-                                            setIsLoading(false);
-                                        }
-                                    },
-                                },
-                            ],
-                            "plain-text"
-                        );
-                    },
-                },
-            ]
-        );
-    };
+    // const handleConfirm = async () => {
+    //     Alert.alert(
+    //         "Confirm Appointment",
+    //         "Are you sure you want to confirm this appointment?",
+    //         [
+    //             {
+    //                 text: "No",
+    //                 style: "cancel",
+    //             },
+    //             {
+    //                 text: "Yes, Confirm",
+    //                 onPress: async () => {
+    //                     Alert.prompt(
+    //                         "Enter Location",
+    //                         "Please enter the location or venue for the appointment:",
+    //                         [
+    //                             {
+    //                                 text: "Cancel",
+    //                                 style: "cancel",
+    //                             },
+    //                             {
+    //                                 text: "OK",
+    //                                 onPress: async (location) => {
+    //                                     try {
+    //                                         setIsLoading(true);
+    //                                         await updateStatusAppointmentById({ id: id!, status: "confirmed", location }); // Pass the location
+    //                                         router.replace("/explore"); // Navigate back after confirmation
+    //                                     } catch (error) {
+    //                                         Alert.alert("Error", "Failed to confirm appointment. Please try again.");
+    //                                     } finally {
+    //                                         setIsLoading(false);
+    //                                     }
+    //                                 },
+    //                             },
+    //                         ],
+    //                         "plain-text"
+    //                     );
+    //                 },
+    //             },
+    //         ]
+    //     );
+    // };
 
-    const handleComplete = async () => {
-        Alert.alert(
-            "Complete Appointment",
-            "Are you sure you want to complete this appointment?",
-            [
-                {
-                    text: "No",
-                    style: "cancel",
-                },
-                {
-                    text: "Yes, Complete",
-                    onPress: async () => {
-                        promptDuration()
-                    },
-                },
-            ]
-        );
+    // const handleComplete = async () => {
+    //     Alert.alert(
+    //         "Complete Appointment",
+    //         "Are you sure you want to complete this appointment?",
+    //         [
+    //             {
+    //                 text: "No",
+    //                 style: "cancel",
+    //             },
+    //             {
+    //                 text: "Yes, Complete",
+    //                 onPress: async () => {
+    //                     promptDuration()
+    //                 },
+    //             },
+    //         ]
+    //     );
 
 
-    };
+    // };
 
-    const promptDuration = () => {
-        Alert.prompt(
-            "Enter Duration",
-            "Please enter the duration of the appointment in hours:",
-            [
-                {
-                    text: "Cancel",
-                    style: "cancel",
-                },
-                {
-                    text: "OK",
-                    onPress: async (duration: any) => {
-                        if (parseFloat(duration) < 1) {
-                            Alert.alert("Invalid Duration", "The duration must be at least 1 hour.");
-                            return;
-                        }
+    // const promptDuration = () => {
+    //     Alert.prompt(
+    //         "Enter Duration",
+    //         "Please enter the duration of the appointment in hours:",
+    //         [
+    //             {
+    //                 text: "Cancel",
+    //                 style: "cancel",
+    //             },
+    //             {
+    //                 text: "OK",
+    //                 onPress: async (duration: any) => {
+    //                     if (parseFloat(duration) < 1) {
+    //                         Alert.alert("Invalid Duration", "The duration must be at least 1 hour.");
+    //                         return;
+    //                     }
 
-                        try {
-                            setIsLoading(true);
-                            const res = await updateStatusAppointmentById({ id: id!, status: "completed", duration }); // Call the completion function
-                            Alert.alert("Completed!", "Thank you! Your score has been updated");
-                            refetch();
-                            router.replace("/explore"); // Navigate back after completion
-                        } catch (error) {
-                            Alert.alert("Error", "Failed to complete appointment. Please try again.");
-                        } finally {
-                            setIsLoading(false);
-                        }
-                    },
-                },
-            ],
-            "plain-text"
-        );
-    }
+    //                     try {
+    //                         setIsLoading(true);
+    //                         const res = await updateStatusAppointmentById({ id: id!, status: "completed", duration }); // Call the completion function
+    //                         Alert.alert("Completed!", "Thank you! Your score has been updated");
+    //                         refetch();
+    //                         router.replace("/explore"); // Navigate back after completion
+    //                     } catch (error) {
+    //                         Alert.alert("Error", "Failed to complete appointment. Please try again.");
+    //                     } finally {
+    //                         setIsLoading(false);
+    //                     }
+    //                 },
+    //             },
+    //         ],
+    //         "plain-text"
+    //     );
+    // }
 
-    const handleConfirmPayment = async () => {
-        if (!appointment?.$id) {
-            alert("Appointment not found!");
-            return;
-        }
+    // const handleConfirmPayment = async () => {
+    //     if (!appointment?.$id) {
+    //         alert("Appointment not found!");
+    //         return;
+    //     }
 
-        try {
-            setIsLoading(true);
+    //     try {
+    //         setIsLoading(true);
 
-            const res = await confirmPayment(appointment.$id)
-            if (res) {
-                alert("Confirmed Payment! Thank you!")
-                refetchAppointment({ id: appointment.$id })
-            }
-        } catch (error) {
+    //         const res = await confirmPayment(appointment.$id)
+    //         if (res) {
+    //             alert("Confirmed Payment! Thank you!")
+    //             refetchAppointment({ id: appointment.$id })
+    //         }
+    //     } catch (error) {
 
-        } finally {
-            setIsLoading(false);
-        }
-    }
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // }
 
-    const handleCreateChat = async () => {
-        if (!appointment?.userProfile_id || !appointment?.trainerProfile_id) {
-            alert("Invalid Appointment");
-            return;
-        }
+    // const handleCreateChat = async () => {
+    //     if (!appointment?.userProfile_id || !appointment?.trainerProfile_id) {
+    //         alert("Invalid Appointment");
+    //         return;
+    //     }
 
-        try {
-            const res = await creatInbox({
-                trainerProfile_id: appointment.trainerProfile_id,
-                userProfile_id: appointment.userProfile_id
-            })
+    //     try {
+    //         const res = await creatInbox({
+    //             trainerProfile_id: appointment.trainerProfile_id,
+    //             userProfile_id: appointment.userProfile_id
+    //         })
 
-            if (res) {
-                router.push(`/inboxes/${res.$id}`);
-            }
-        } catch (error) {
-            console.log(error)
-            alert(error)
-        } finally {
+    //         if (res) {
+    //             router.push(`/inboxes/${res.$id}`);
+    //         }
+    //     } catch (error) {
+    //         console.log(error)
+    //         alert(error)
+    //     } finally {
 
-        }
+    //     }
 
-    }
+    // }
 
     const handleRefetch = () => {
         refetchAppointment({ id: appointment.$id })

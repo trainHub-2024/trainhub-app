@@ -14,7 +14,7 @@ const AppointmentDetails = ({ data }: { data: Appointment }) => {
             <View className='w-full px-6 py-6 rounded-xl bg-white flex-row gap-4 justify-start items-center'>
                 <View className='relative flex-1'>
                     <Text className='text-primary text-lg font-poppinsBold'>{new Date(data.date).toDateString()} - {data?.timeSlot}</Text>
-                    <Text className='font-poppinsBold'>₱{data?.trainerProfile?.trainerProfile_id?.trainingPrice}</Text>
+                    <Text className='font-poppinsBold'>₱{data?.trainerProfile?.trainerProfile_id?.trainingPrice}/hr</Text>
                     <Text className='font-poppins text-sm text-muted-foreground'>{data?.trainerProfile?.trainerProfile_id.contactNumber}</Text>
                     <Text className='font-poppins text-sm text-muted-foreground'>Venue: {data?.venue ?? "To be announced"}</Text>
                     <Text className='font-poppins text-sm text-muted-foreground'>Duration: {data?.duration ? `${data?.duration} hr/s` : "To be announced"}</Text>
