@@ -1,5 +1,5 @@
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, TouchableOpacity, Image, ScrollView } from "react-native";
-import React, { useState } from "react";
+import { View, SafeAreaView, Text, ActivityIndicator, Alert, TouchableOpacity, Image, ScrollView, RefreshControl } from "react-native";
+import React, { useCallback, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAppwrite } from "@/lib/useAppwrite";
 import { confirmPayment, creatInbox, getAppointmentById, updateStatusAppointmentById } from "@/lib/appwrite";
@@ -10,6 +10,7 @@ import AppointmentDetails from "./_components/appointment-details";
 import StatusDetails from "./_components/status-details";
 import UserDetails from "./_components/user-details";
 import PaymentDetails from "./_components/payment-details";
+import AppointmentButtons from "./_components/buttons";
 
 const Appointment = () => {
     const { user, refetch } = useGlobalContext();
@@ -28,6 +29,7 @@ const Appointment = () => {
     const hasConfirmedPayment: boolean = appointment?.isConfirmedPayment ? appointment?.isConfirmedPayment : false
 
     const [isLoading, setIsLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     const handleCancel = async () => {
         Alert.alert(
@@ -202,6 +204,16 @@ const Appointment = () => {
 
     }
 
+    const handleRefetch = () => {
+        refetchAppointment({ id: appointment.$id })
+    }
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await refetchAppointment({ id: appointment?.$id! });
+        setRefreshing(false);
+    }, [appointment]);
+
     if (loading || isLoading) {
         return (
             <SafeAreaView className="items-center justify-center flex-1">
@@ -224,237 +236,26 @@ const Appointment = () => {
         <SafeAreaView className="flex-1 bg-muted">
             <View className="flex-1 px-7">
                 <View className="bg-muted py-4">
-                    <Text className="font-poppinsBold text-lg text-primary text-center">Review Appointment</Text>
+                    <Text className="font-poppinsBold text-xl text-primary text-center">Review Appointment</Text>
                 </View>
 
                 <ScrollView
                     className="flex-1"
                     contentContainerStyle={{ gap: 12 }}
                     showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
                 >
 
                     <AppointmentDetails data={appointment as any} />
                     <UserDetails data={appointment as any} />
                     <PaymentDetails data={appointment as any} />
-
+                    <AppointmentButtons data={appointment as any} refetch={handleRefetch} />
 
                 </ScrollView>
             </View>
         </SafeAreaView>
-        // <SafeAreaView className="flex-1 px-4 bg-white">
-        //     <ScrollView
-        //         showsVerticalScrollIndicator={false}
-        //     >
-        //         {/* Back Button */}
-        //         {/* <TouchableOpacity onPress={() => router.replace("/explore")} className="w-10 p-3 bg-gray-200 rounded-full">
-        //         <Text className="text-lg text-center">←</Text>
-        //     </TouchableOpacity> */}
-
-        //         {/* Header */}
-        //         <View className="flex-row items-center justify-between py-4">
-        //             <Text className="text-2xl font-bold text-primary">Appointment</Text>
-        //             <TouchableOpacity onPress={handleCreateChat}>
-        //                 <View>
-        //                     <Text>Message</Text>
-        //                 </View>
-        //             </TouchableOpacity>
-        //         </View>
-
-        //         {/* Appointment Details */}
-        //         <View className="p-4 mb-4 bg-gray-100 rounded-lg">
-        //             <Text className="text-lg font-semibold uppercase">Status: {appointment.status}</Text>
-        //             <Text className="text-base text-gray-600">
-        //                 Date: {new Date(appointment.date).toLocaleDateString()} - {appointment?.timeSlot}
-        //             </Text>
-        //             <Text className="text-base text-gray-600">Price: {appointment.price}</Text>
-        //             {appointment?.venue && (
-        //                 <Text className="text-base text-gray-600">Venue: {appointment.venue}</Text>
-        //             )}
-        //         </View>
-
-        //         {/* Trainer Details */}
-        //         <View className="p-4 mb-4 bg-gray-100 rounded-lg">
-        //             <Text className="text-lg font-semibold">Trainer</Text>
-        //             <Text className="text-base text-gray-600">Name: {appointment.trainerProfile?.name}</Text>
-        //             <Text className="text-base text-gray-600">Location: {appointment.trainerProfile?.location}</Text>
-        //             {appointment?.status === "confirmed" || appointment?.status === "completed" && (
-        //                 <Text className="text-base text-gray-600">Contact: {appointment.trainerProfile?.contactNumber}</Text>
-        //             )}
-        //         </View>
-
-        //         {/* User Details */}
-        //         <View className="p-4 bg-gray-100 rounded-lg">
-        //             <Text className="text-lg font-semibold">Trainee</Text>
-        //             <Text className="text-base text-gray-600">Name: {appointment.userProfile?.name}</Text>
-        //             <Text className="text-base text-gray-600">Location: {appointment.userProfile?.location}</Text>
-        //             {appointment?.status === "confirmed" || appointment?.status === "completed" && (
-        //                 <Text className="text-base text-gray-600">Contact: {appointment.userProfile?.contactNumber}</Text>
-        //             )}
-        //         </View>
-
-        //         <PaymentDetails data={appointment as any} />
-
-        //         {/* Buttons */}
-        //         <View className="gap-2 mt-6">
-
-        //             {appointment.status === "completed" &&
-        //                 <>
-        //                     {user?.role === "trainee" ?
-        //                         <>
-        //                             {
-        //                                 isPaid ? <>
-        //                                     {hasConfirmedPayment ? <>
-        //                                         {appointment?.rating ? <>
-        //                                             <View className="p-4 bg-gray-100 rounded-lg">
-        //                                                 <Text className="text-lg font-semibold">Rating</Text>
-        //                                                 <Text className="text-base text-gray-600">Rating: {appointment?.rating?.rating}</Text>
-        //                                             </View>
-        //                                         </> : <>
-        //                                             <RatingModal trainerId={trainerProfileId} userId={userProfileId} appointmentId={id ?? ""} />
-        //                                         </>}
-        //                                     </> : <>
-        //                                         <Text>Please wait while the trainer confirms your payment</Text>
-        //                                     </>}
-        //                                 </> : <>
-        //                                     <Button
-        //                                         onPress={() => router.push(`/payment/${id}`)}
-        //                                         variant="success"
-        //                                         label="Proceed to Payment"
-        //                                     />
-        //                                 </>
-        //                             }
-        //                         </> : <>
-        //                             {isPaid ?
-        //                                 <>
-        //                                     {hasConfirmedPayment ? <>
-        //                                         <View>
-        //                                             <View>
-        //                                                 <Text>
-        //                                                     Payment Method:
-        //                                                     <Text className="font-bold capitalize"> {appointment?.paymentMethod}</Text>
-        //                                                 </Text>
-        //                                                 <Text>
-        //                                                     Payment Date:
-        //                                                     <Text className="font-bold "> {new Date(appointment?.paymentDate).toLocaleDateString()}</Text>
-        //                                                 </Text>
-        //                                                 {
-        //                                                     appointment?.paymentImage && (
-        //                                                         <View className="relative w-full mt-2 aspect-square">
-        //                                                             <Image
-        //                                                                 source={{ uri: appointment?.paymentImage }} // ✅ Ensure the correct property is accessed
-        //                                                                 resizeMode="cover"
-        //                                                                 className="rounded-md size-full"
-        //                                                             />
-        //                                                         </View>
-        //                                                     )
-        //                                                 }
-        //                                             </View>
-        //                                         </View>
-        //                                     </> : <>
-        //                                         <View>
-        //                                             <View>
-        //                                                 <Text>
-        //                                                     Payment Method:
-        //                                                     <Text className="font-bold capitalize"> {appointment?.paymentMethod}</Text>
-        //                                                 </Text>
-        //                                                 <Text>
-        //                                                     Payment Date:
-        //                                                     <Text className="font-bold "> {new Date(appointment?.paymentDate).toLocaleDateString()}</Text>
-        //                                                 </Text>
-        //                                                 {
-        //                                                     appointment?.paymentImage && (
-        //                                                         <View className="relative w-full mt-2 aspect-square">
-        //                                                             <Image
-        //                                                                 source={{ uri: appointment?.paymentImage }} // ✅ Ensure the correct property is accessed
-        //                                                                 resizeMode="cover"
-        //                                                                 className="rounded-md size-full"
-        //                                                             />
-        //                                                         </View>
-        //                                                     )
-        //                                                 }
-        //                                             </View>
-        //                                             <Button
-        //                                                 className="mt-2"
-        //                                                 isLoading={isLoading}
-        //                                                 onPress={handleConfirmPayment}
-        //                                                 variant="success"
-        //                                                 label="Confirm Payment"
-        //                                             />
-        //                                         </View>
-        //                                     </>}
-        //                                 </>
-        //                                 :
-        //                                 <View className="gap-4">
-        //                                     <View>
-        //                                         <Text className="text-center">
-        //                                             Payment being processed...
-        //                                         </Text>
-        //                                     </View>
-
-        //                                 </View>
-        //                             }
-        //                         </>
-        //                     }
-        //                 </>}
-
-        //             {appointment.status === "cancelled" && (
-        //                 <>
-        //                     <Button
-        //                         variant="secondary"
-        //                         label={"Cancelled"}
-        //                         isLoading={true}
-        //                     />
-        //                 </>
-        //             )}
-
-        //             {appointment.status === "pending" && (
-        //                 <>
-        //                     {user?.role === "trainee" ? (
-        //                         <Button
-        //                             variant="destructive"
-        //                             label={"Cancel Appointment"}
-        //                             isLoading={isLoading}
-        //                             onPress={handleCancel}
-        //                         />
-        //                     ) :
-        //                         <>
-        //                             <Button
-        //                                 variant="default"
-        //                                 label={"Confirm Appointment"}
-        //                                 isLoading={isLoading}
-        //                                 onPress={handleConfirm}
-        //                             />
-        //                             <Button
-        //                                 variant="destructive"
-        //                                 label={"Cancel Appointment"}
-        //                                 isLoading={isLoading}
-        //                                 onPress={handleCancel}
-        //                             />
-        //                         </>}
-        //                 </>
-        //             )}
-
-        //             {appointment.status === "confirmed" && (
-        //                 <>
-        //                     <Button
-        //                         variant="default"
-        //                         label={"Complete Appointment"}
-        //                         isLoading={isLoading}
-        //                         onPress={handleComplete}
-        //                     />
-        //                     <Button
-        //                         variant="destructive"
-        //                         label={"Cancel Appointment"}
-        //                         isLoading={isLoading}
-        //                         onPress={handleCancel}
-        //                     />
-        //                 </>
-        //             )}
-
-        //         </View>
-        //     </ScrollView>
-
-        // </SafeAreaView>
     );
 };
 

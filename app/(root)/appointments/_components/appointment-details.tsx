@@ -9,7 +9,7 @@ const AppointmentDetails = ({ data }: { data: Appointment }) => {
 
     console.log(data?.sports)
 
-    if (user?.role === "trainer")
+    // if (user?.role === "trainer")
         return (
             <View className='w-full px-6 py-6 rounded-xl bg-white flex-row gap-4 justify-start items-center'>
                 <View className='relative flex-1'>
