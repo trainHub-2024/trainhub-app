@@ -1373,6 +1373,43 @@ export async function getPaidAppointments({
   }
 }
 
+export async function getPenaltyAppointments({
+  limit,
+}: {
+  limit?: number;
+}) {
+  try {
+    console.log("fetch penalty appointments...");
+    const user = await getCurrentUser();
+
+    if (!user?.profile_id) {
+      throw new Error("Profile not found");
+    }
+
+    const buildQuery: any[] = [
+      Query.orderDesc("$updatedAt"),
+      Query.equal("isPenalized", true),
+      Query.equal("trainerProfile_id", user.profile_id.$id),
+    ];
+
+    if (limit) buildQuery.push(Query.limit(limit));
+
+    const result = await databases.listDocuments(
+      config.databaseId!,
+      config.appointmentCollectionId!,
+      buildQuery
+    );
+
+    console.log("PENALTY APPOINTMENTSSS");
+    console.log(result);
+
+    return result.documents || [];
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
 export async function creatInbox({
   trainerProfile_id,
   userProfile_id,

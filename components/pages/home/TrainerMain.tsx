@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useGlobalContext } from '@/lib/global-provider';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useAppwrite } from '@/lib/useAppwrite';
-import { getPaidAppointments } from '@/lib/appwrite';
+import { getPaidAppointments, getPenaltyAppointments } from '@/lib/appwrite';
 import { computeTrainerIncome } from '@/lib/utils';
 
 const HomeTrainerMain = () => {
@@ -19,6 +19,17 @@ const HomeTrainerMain = () => {
         fn: getPaidAppointments,
         // skip: true,
     });
+
+    const {
+        data: penalties,
+        refetch: refetchPenalties,
+        loading: penaltiesLoading,
+    } = useAppwrite({
+        fn: getPenaltyAppointments,
+        // skip: true,
+    });
+
+    console.log(penalties)
 
 
 
@@ -36,12 +47,6 @@ const HomeTrainerMain = () => {
         return data?.reduce((sum, appointment) => sum + computeTrainerIncome(appointment as any), 0) ?? 0;
     }, [data]);
 
-
-    // Temporary dataset (can be replaced with real API data)
-    const trainer = {
-        averageRating: 4.5, // Simulating customer rating (out of 5)
-    };
-
     const level = 1 + Math.floor(trainerScore / 5); // Level increases every 5 completed bookings
     const progress = (trainerScore % 5) / 5; // Progress within the level
 
@@ -53,7 +58,7 @@ const HomeTrainerMain = () => {
                 </View>
                 <Text className='text-2xl font-poppinsMedium text-primary'>Hello, {user?.name}</Text>
             </View>
-            <View className='flex-row gap-2 py-4 px-7'>
+            <View className='flex-row gap-2 py-2 pt-4 px-7'>
                 <View className='flex-1 gap-2 p-4 rounded-xl bg-primary-light'>
                     <Text className='text-xl font-poppins'>Level</Text>
                     <Text className='text-4xl text-left font-poppinsBold'>{level}</Text>
@@ -64,6 +69,19 @@ const HomeTrainerMain = () => {
                 <View className='flex-1 gap-2 p-4 rounded-xl bg-secondary'>
                     <Text className='text-xl font-poppins'>Earnings</Text>
                     <Text className='text-4xl text-left font-poppinsBold'>₱{totalEarnings}</Text>
+                </View>
+            </View>
+            <View className='flex-row gap-2 py-2 px-7'>
+                <View className='flex-1 gap-2 p-4 rounded-xl bg-primary-light'>
+                    <Text className='text-xl font-poppins'>Penalties</Text>
+                    <Text className='text-4xl text-left font-poppinsBold'>{penalties?.length ?? 0}</Text>
+                    <Text className='text-sm font-poppins'>
+                        these are the cancelled bookings
+                    </Text>
+                </View>
+                <View className='flex-1'>
+                    {/* <Text className='text-xl font-poppins'>Earnings</Text>
+                    <Text className='text-4xl text-left font-poppinsBold'>₱{totalEarnings}</Text> */}
                 </View>
             </View>
         </SafeAreaView>
