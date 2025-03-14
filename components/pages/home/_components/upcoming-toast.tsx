@@ -11,9 +11,15 @@ const UpcomingToast = () => {
         loading,
     } = useAppwrite({
         fn: getTomorrowAppointments,
-        // skip: true,
+        skip: true,
     });
 
+    useEffect(() => {
+        refetch({});
+    }, [])
+
+
+    console.log("UPCOMING")
     console.log(tomorrowAppointments);
 
     useEffect(() => {

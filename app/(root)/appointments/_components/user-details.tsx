@@ -8,6 +8,8 @@ const UserDetails = ({ data }: { data: Appointment }) => {
 
     console.log(data?.trainerProfile)
 
+    const contactNumber = data.status === "pending" ? `${data?.trainerProfile?.trainerProfile_id?.contactNumber?.substring(0, 2)}xx xxx xxxx` : data?.trainerProfile?.trainerProfile_id?.contactNumber
+
     if (user?.role === "trainer")
         return (
             <View className='w-full px-6 py-6 rounded-xl bg-white flex-row gap-4 justify-between items-center'>
@@ -33,9 +35,7 @@ const UserDetails = ({ data }: { data: Appointment }) => {
                     <Text className='text-primary text-lg font-poppinsBold'>TRAINER INFORMATION</Text>
                     <Text className='font-poppinsBold'>{data?.trainerProfile?.username}</Text>
                     <Text className='font-poppins text-sm text-muted-foreground'>{data?.trainerProfile?.trainerProfile_id.location}</Text>
-                    {data.status !== "pending" && (
-                        <Text className='font-poppins text-sm text-muted-foreground'>{data?.trainerProfile?.trainerProfile_id?.contactNumber}</Text>
-                    )}
+                    <Text className='font-poppins text-sm text-muted-foreground'>{contactNumber}</Text>
                 </View>
                 <View className='rounded-full size-20 border-2 border-primary'>
                     <Image

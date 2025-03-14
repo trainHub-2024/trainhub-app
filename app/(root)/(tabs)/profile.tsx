@@ -86,6 +86,7 @@ const Profile = () => {
                             <SettingsItem icon={icons.dumbell} label='Credentials' onPress={() => router.push("/credentials")} />
                         </>
                     )}
+                    <SettingsItem icon={icons.info} label='FAQ' onPress={() => router.push("/faq")} />
                     <SettingsItem icon={icons.logout} label='Logout' showArrow={false} onPress={handleLogout} />
                 </View>
 

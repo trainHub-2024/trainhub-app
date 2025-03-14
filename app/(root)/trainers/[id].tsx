@@ -74,6 +74,9 @@ const Trainer = () => {
 
     }
 
+    const contactNumber = `${trainer?.trainerProfile_id?.contactNumber?.substring(0, 2)}xx xxx xxxx`
+
+
     if (loading) return null;
 
 
@@ -105,7 +108,7 @@ const Trainer = () => {
                         </View>
                         <View className="flex-row gap-1">
                             <FontAwesome name="phone" size={16} color={"#fb8500"} />
-                            <Text className="text-base text-muted-foreground font-poppins">{trainer?.trainerProfile_id?.contactNumber}</Text>
+                            <Text className="text-base text-muted-foreground font-poppins">{contactNumber}</Text>
                         </View>
                     </View>
 

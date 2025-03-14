@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "react_native",
+    "name": "TrainHub",
     "slug": "trainhub",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "package": "com.trainhub",
-      "bundleIdentifier": "com.kielobash.trainhub",
+      "bundleIdentifier": "com.thesis.trainhub",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.kielobash.trainhub"
+      "package": "com.thesis.trainhub"
     },
     "web": {
       "bundler": "metro",
