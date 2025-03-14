@@ -123,13 +123,13 @@ export async function getCurrentUser() {
       profile_id: userDocument?.userProfile_id
         ? userDocument.userProfile_id
         : userDocument?.trainerProfile_id
-        ? userDocument?.trainerProfile_id
-        : null,
+          ? userDocument?.trainerProfile_id
+          : null,
       profile: userDocument?.userProfile_id
         ? userDocument.userProfile_id
         : userDocument?.trainerProfile_id
-        ? userDocument?.trainerProfile_id
-        : null,
+          ? userDocument?.trainerProfile_id
+          : null,
     };
   } catch (error) {
     console.log(error);
@@ -1156,6 +1156,35 @@ export async function getFilePreview(fileId: any) {
     throw new Error(error);
   }
 }
+
+export async function createAppealNotice({
+  profileId,
+}: {
+  profileId: string;
+}) {
+  console.log("CREATE APPEAL...")
+  console.log(profileId);
+
+  const profile = await databases.getDocument(
+    config.databaseId!,
+    config.trainerProfileCollectionId!,
+    profileId
+  );
+
+  await databases.createDocument(
+    config.databaseId!,
+    config.adminRequestCollectionId!,
+    ID.unique(),
+    {
+      text: "Sent an appeal for enabling visibility",
+      trainerProfile_id: profileId,
+      type: "appeal",
+    }
+  );
+
+  return true;
+}
+
 
 export async function uploadCertificate({
   profileId,

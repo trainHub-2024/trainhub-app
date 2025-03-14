@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import icons from '@/constants/icons'
 import images from '@/constants/images'
 import { useGlobalContext } from '@/lib/global-provider'
-import { logout } from '@/lib/appwrite'
+import { createAppealNotice, logout } from '@/lib/appwrite'
 import { router } from 'expo-router'
 
 type SettingsItemProps = {
@@ -48,6 +48,17 @@ const Profile = () => {
         }
     };
 
+    const handleAppeal = async () => {
+        try {
+            const res = await createAppealNotice({ profileId: user?.profile?.$id ?? "" })
+            if (res)
+                Alert.alert("Success", "Sent an appeal for the admin!");
+        } catch (error) {
+            console.log(error)
+            Alert.alert("Error", "Failed to send appeal");
+        }
+    }
+
     return (
         <SafeAreaView className='h-full bg-white'>
             <ScrollView
@@ -79,6 +90,9 @@ const Profile = () => {
                 </View>
 
                 <View className='flex-col gap-4'>
+                    {user?.profile?.isDisabled && (
+                        <SettingsItem icon={icons.phone} label='Send appeal notice' showArrow={false} onPress={handleAppeal} />
+                    )}
                     <SettingsItem icon={icons.people} label='My Profile' onPress={() => router.push(`/my-profile`)} />
                     {user?.role === "trainer" && (
                         <>
