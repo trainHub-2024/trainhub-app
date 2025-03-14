@@ -28,6 +28,7 @@ const ExploreTraineeMain = () => {
         params: {
             filter: selectedSport,
             query: params.search!,
+            location: user?.profile?.location ?? ""
         },
         skip: true,
     });
@@ -39,7 +40,7 @@ const ExploreTraineeMain = () => {
     // Refetch trainers when the search query or selected sport changes
     useEffect(() => {
         console.log(selectedSport)
-        refetchTrainers({ filter: selectedSport, query: params.search! });
+        refetchTrainers({ filter: selectedSport, query: params.search!, location: user?.profile?.location ?? "" });
     }, [params.search, selectedSport]);
 
     if (!user) return null;

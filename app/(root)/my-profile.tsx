@@ -57,7 +57,8 @@ const MyProfile = () => {
         fn: getSports,
     });
     const sportsOptions = [...(sportsData?.map((sport) => ({ key: sport.$id, label: sport.name })) || [])];
-
+    const locationOptions = ["Tondo", "Binondo", "Quiapo", "San Nicolas", "Sta. Cruz", "Sampaloc",
+        "San Miguel", "Ermita", "Intramuros", "Malate", "Paco", "Pandacan", "Port Area", "Sta. Ana"].map((loc) => ({ key: loc, label: loc }));
 
     async function openPicker(value: "profile" | "qrCode") {
         // Request permission
@@ -156,13 +157,20 @@ const MyProfile = () => {
                             handleChangeText={(e) => setForm({ ...form, name: e })}
                             otherStyles='w-full'
                         />
-                        <FormField
+                        <SelectMenu
+                            label='Select your location'
+                            options={locationOptions}
+                            selectedValue={form.location}
+                            onSelect={(e) => setForm({ ...form, location: e })}
+                        />
+
+                        {/* <FormField
                             title='Location'
                             value={form.location}
                             placeholder='Enter your location'
                             handleChangeText={(e) => setForm({ ...form, location: e })}
                             otherStyles='w-full'
-                        />
+                        /> */}
                         <FormField
                             title='Gender'
                             value={form.gender}

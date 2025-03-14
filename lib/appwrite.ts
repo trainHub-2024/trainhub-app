@@ -383,14 +383,17 @@ export async function getTrainers({
   filter,
   query,
   limit,
+  location,
 }: {
+  location: string;
   filter: string;
   query: string;
   limit?: number;
 }) {
   try {
-    console.log("fetch trainers...");
+    console.log("fetch trainers in " + location);
     const buildQuery = [
+      Query.equal("location",location),
       Query.orderDesc("score"),
       Query.equal("isDisabled", false),
     ];
@@ -937,7 +940,7 @@ export async function createRating({
     );
 
     console.log("TRAINNERPROFILE");
-    console.log(trainerProfile?.ratings)
+    console.log(trainerProfile?.ratings);
 
     const userProfile = await databases.getDocument(
       config.databaseId!,
@@ -959,10 +962,12 @@ export async function createRating({
       }
     );
 
-    console.log("CREATED RATING")
-    console.log(newRating)
+    console.log("CREATED RATING");
+    console.log(newRating);
 
-    const averageRating = (trainerProfile.averageRating + rating) / (trainerProfile.ratings.length + 1)
+    const averageRating =
+      (trainerProfile.averageRating + rating) /
+      (trainerProfile.ratings.length + 1);
 
     // add rating to trainer
     const updatedTrainer = await databases.updateDocument(
@@ -971,12 +976,12 @@ export async function createRating({
       trainerId,
       {
         ratings: [...(trainerProfile.ratings || []), newRating.$id],
-        averageRating
+        averageRating,
       }
     );
 
-    console.log("UPDATED TRAINER")
-    console.log(updatedTrainer)
+    console.log("UPDATED TRAINER");
+    console.log(updatedTrainer);
 
     // await databases.updateDocument(
     //   config.databaseId!,
