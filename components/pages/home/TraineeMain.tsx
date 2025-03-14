@@ -28,9 +28,11 @@ const HomeTraineeMain = () => {
     return (
         <SafeAreaView className="flex-1 bg-white">
             <UpcomingToast />
-            <ScrollView showsVerticalScrollIndicator={false} className="px-7" contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}>
-                {/* Header */}
+            <View className="pb-2 px-7">
                 <TraineeHeader />
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false} className="px-7" contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
+                {/* Header */}
 
 
                 {/* ADS */}

@@ -123,13 +123,13 @@ export async function getCurrentUser() {
       profile_id: userDocument?.userProfile_id
         ? userDocument.userProfile_id
         : userDocument?.trainerProfile_id
-          ? userDocument?.trainerProfile_id
-          : null,
+        ? userDocument?.trainerProfile_id
+        : null,
       profile: userDocument?.userProfile_id
         ? userDocument.userProfile_id
         : userDocument?.trainerProfile_id
-          ? userDocument?.trainerProfile_id
-          : null,
+        ? userDocument?.trainerProfile_id
+        : null,
     };
   } catch (error) {
     console.log(error);
@@ -927,6 +927,26 @@ export async function createRating({
 }: CreateRatingProps) {
   try {
     console.log("Trying to rate...");
+
+    console.log({ rating, trainerId, userId, appointmentId });
+
+    const trainerProfile = await databases.getDocument(
+      config.databaseId!,
+      config.trainerProfileCollectionId!,
+      trainerId
+    );
+
+    console.log("TRAINNERPROFILE");
+    console.log(trainerProfile?.ratings)
+
+    const userProfile = await databases.getDocument(
+      config.databaseId!,
+      config.userProfileCollectionId!,
+      userId
+    );
+
+    console.log("USERPROFIL");
+
     const newRating = await databases.createDocument(
       config.databaseId!,
       config.ratingCollectionId!,
@@ -939,36 +959,33 @@ export async function createRating({
       }
     );
 
-    const trainerProfile = await databases.getDocument(
-      config.databaseId!,
-      config.trainerProfileCollectionId!,
-      trainerId
-    );
+    console.log("CREATED RATING")
+    console.log(newRating)
 
-    const userProfile = await databases.getDocument(
-      config.databaseId!,
-      config.userProfileCollectionId!,
-      userId
-    );
+    const averageRating = (trainerProfile.averageRating + rating) / (trainerProfile.ratings.length + 1)
 
     // add rating to trainer
-    await databases.updateDocument(
+    const updatedTrainer = await databases.updateDocument(
       config.databaseId!,
       config.trainerProfileCollectionId!,
       trainerId,
       {
         ratings: [...(trainerProfile.ratings || []), newRating.$id],
+        averageRating
       }
     );
 
-    await databases.updateDocument(
-      config.databaseId!,
-      config.userProfileCollectionId!,
-      userId,
-      {
-        ratings: [...(userProfile.ratings || []), newRating.$id],
-      }
-    );
+    console.log("UPDATED TRAINER")
+    console.log(updatedTrainer)
+
+    // await databases.updateDocument(
+    //   config.databaseId!,
+    //   config.userProfileCollectionId!,
+    //   userId,
+    //   {
+    //     ratings: [...(userProfile.ratings || []), newRating.$id],
+    //   }
+    // );
 
     await databases.updateDocument(
       config.databaseId!,
@@ -1157,12 +1174,8 @@ export async function getFilePreview(fileId: any) {
   }
 }
 
-export async function createAppealNotice({
-  profileId,
-}: {
-  profileId: string;
-}) {
-  console.log("CREATE APPEAL...")
+export async function createAppealNotice({ profileId }: { profileId: string }) {
+  console.log("CREATE APPEAL...");
   console.log(profileId);
 
   const profile = await databases.getDocument(
@@ -1184,7 +1197,6 @@ export async function createAppealNotice({
 
   return true;
 }
-
 
 export async function uploadCertificate({
   profileId,
@@ -1373,11 +1385,7 @@ export async function getPaidAppointments({
   }
 }
 
-export async function getPenaltyAppointments({
-  limit,
-}: {
-  limit?: number;
-}) {
+export async function getPenaltyAppointments({ limit }: { limit?: number }) {
   try {
     console.log("fetch penalty appointments...");
     const user = await getCurrentUser();

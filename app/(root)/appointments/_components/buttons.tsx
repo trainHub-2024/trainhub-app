@@ -226,11 +226,11 @@ const TrainerButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
                         </> :
                             <View className='w-full px-6 py-4 bg-white rounded-lg'>
                                 <Text className='text-xl text-primary font-poppinsBold'>Waiting for Payment...</Text>
-                                <Text className='font-poppins text-muted-foreground text-sm'>Please wait or message the user to inform them about their payment</Text>
-                                <View className='flex-row justify-end items-center mt-4'>
-                                    <TouchableOpacity onPress={handleCreateChat} className="flex justify-center gap-2 items-center flex-row bg-primary h-12 rounded-full flex-1">
+                                <Text className='text-sm font-poppins text-muted-foreground'>Please wait or message the user to inform them about their payment</Text>
+                                <View className='flex-row items-center justify-end mt-4'>
+                                    <TouchableOpacity onPress={handleCreateChat} className="flex flex-row items-center justify-center flex-1 h-12 gap-2 rounded-full bg-primary">
                                         <FontAwesome name="send" size={16} color={"white"} />
-                                        <Text className="font-poppinsBold text-white text-lg">Message</Text>
+                                        <Text className="text-lg text-white font-poppinsBold">Message</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -300,6 +300,11 @@ const TraineeButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
     async function handlePay() {
         router.push(`/payment/${id}`)
     }
+    const trainerId = data?.trainerProfile?.trainerProfile_id?.$id
+    const traineeId = data?.userProfile?.userProfile_id?.$id
+
+    console.log(trainerId)
+    console.log(traineeId)
 
     return (
         <>
@@ -319,9 +324,9 @@ const TraineeButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
                 <>
                     {isPaid ? <View className='w-full px-6 py-4 bg-white rounded-lg'>
                         <Text className='text-xl text-primary font-poppinsBold'>Waiting for confirmation...</Text>
-                        <Text className='font-poppins text-muted-foreground text-sm'>Please wait or message the trainer to inform them about your payment</Text>
-                        <View className='mt-4 w-full'>
-                            <RatingModal trainerId={data.trainerProfile.$id} userId={data.userProfile.$id} appointmentId={id} />
+                        <Text className='text-sm font-poppins text-muted-foreground'>Please wait or message the trainer to inform them about your payment</Text>
+                        <View className='w-full mt-4'>
+                            <RatingModal trainerId={data.trainerProfile?.trainerProfile_id?.$id} userId={data.userProfile?.userProfile_id?.$id} appointmentId={id} />
                         </View>
                     </View> :
                         <PayButton handleChange={handlePay} isLoading={isLoading} />
@@ -329,9 +334,17 @@ const TraineeButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
                 </>
             )}
 
-            {status === "completed" && data.isConfirmedPayment && (
-                <RatingModal trainerId={data.trainerProfile.$id} userId={data.userProfile.$id} appointmentId={id} />
-            )}
+            {status === "completed" && data.isConfirmedPayment && <>
+                {data?.rating ? (
+                    <View className='w-full px-6 py-4 bg-white rounded-lg'>
+                        <Text className='text-xl text-primary font-poppinsBold'>Ratings</Text>
+                        <Text className='text-sm font-poppins text-muted-foreground'>You have rated this at a {data.rating.rating}/5</Text>
+                    </View>
+                ) : (
+                    <RatingModal trainerId={trainerId} userId={traineeId} appointmentId={id} />
+                )}
+            </>
+            }
         </>
     )
 }

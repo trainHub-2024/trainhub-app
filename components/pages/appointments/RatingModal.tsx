@@ -9,6 +9,8 @@ const RatingModal = ({ trainerId, userId, appointmentId }: { trainerId: string, 
     const [rating, setRating] = useState("");
     const [isLoading, setIsLoading] = useState(false)
 
+    console.log({ trainerId, userId, appointmentId })
+
     const handleRate = () => {
         setModalVisible(true); // Show the modal
     };
@@ -23,10 +25,11 @@ const RatingModal = ({ trainerId, userId, appointmentId }: { trainerId: string, 
             try {
                 setIsLoading(true);
                 const res = await createRating({ rating: ratingValue, trainerId, userId, appointmentId }); // Call the cancellation function
-                Alert.alert("Completed!", "Thank you! Your score has been updated");
+                Alert.alert("Completed!", "Thank you for your rating please book again!");
                 router.push("/home")
             } catch (error) {
-                Alert.alert("Error", "Failed to complete appointment. Please try again.");
+                console.log(error)
+                Alert.alert("Error", "Failed to complete rating. Please try again.");
             } finally {
                 setIsLoading(false);
             }
@@ -56,13 +59,13 @@ const RatingModal = ({ trainerId, userId, appointmentId }: { trainerId: string, 
                 transparent={true}
                 onRequestClose={handleCancel}
             >
-                <View className="flex-1 justify-center items-center bg-black/50 backdrop-blur-sm">
-                    <View className="bg-white p-5 rounded-lg w-4/5">
+                <View className="items-center justify-center flex-1 bg-black/50 backdrop-blur-sm">
+                    <View className="w-4/5 p-5 bg-white rounded-lg">
                         <Text className="text-xl font-bold">Rate Your Experience</Text>
                         <Text className="my-3">How would you rate your experience from 1-5?</Text>
                         <TextInput
                             style={{ borderWidth: 1 }} // Nativewind does not support dynamic borderWidth directly
-                            className="p-3 rounded-lg mb-5"
+                            className="p-3 mb-5 rounded-lg"
                             value={rating}
                             onChangeText={setRating}
                             keyboardType="numeric"
@@ -77,7 +80,7 @@ const RatingModal = ({ trainerId, userId, appointmentId }: { trainerId: string, 
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={handleSubmit}
-                                className="p-3 bg-primary rounded-lg"
+                                className="p-3 rounded-lg bg-primary"
                             >
                                 <Text className="text-white">Submit</Text>
                             </TouchableOpacity>

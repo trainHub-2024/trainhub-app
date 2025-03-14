@@ -15,6 +15,9 @@ const AppointmentCard = ({ item }: { item: Appointment }) => {
         4: images.avatar_4,
     };
 
+    console.log("RATING")
+    console.log(item.rating)
+
     return (
         <TouchableOpacity
             key={item.$id}
@@ -26,7 +29,7 @@ const AppointmentCard = ({ item }: { item: Appointment }) => {
                 <View>
                     <Text className="text-lg font-poppinsSemiBold">{new Date(item.date).toDateString()}</Text>
                     <Text className="text-sm font-poppins">
-                        {item?.timeSlot}
+                        {item?.timeSlot} {item?.rating ? `- ${item?.rating?.rating} star` : ``}
                     </Text>
                 </View>
                 <Image
