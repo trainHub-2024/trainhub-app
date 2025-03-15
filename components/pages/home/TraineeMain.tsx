@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView, Button, Linking } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/lib/global-provider";
 
@@ -58,6 +58,14 @@ const HomeTraineeMain = () => {
                         source={avatar[number]}
                     />
                 </View>
+                {/* ✅ APK DOWNLOAD BUTTON */}
+                             <View className="px-7 mt-4">
+                                <Button
+                                    title="Download TrainerHub APK"
+                                    onPress={() => Linking.openURL('https://drive.google.com/uc?export=download&id=1l4WFjcbDLk1kUoimd7a4CDaZYMy19v-W')}
+                                    color="#007AFF"
+                                />
+                            </View>
 
                 {/* Calendar */}
                 <DisplayCalendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} />

@@ -1,4 +1,4 @@
-import { View, Text, Image, SafeAreaView } from 'react-native';
+import { View, Text, Image, SafeAreaView, Button, Linking } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useGlobalContext } from '@/lib/global-provider';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -83,6 +83,14 @@ const HomeTrainerMain = () => {
                     {/* <Text className='text-xl font-poppins'>Earnings</Text>
                     <Text className='text-4xl text-left font-poppinsBold'>₱{totalEarnings}</Text> */}
                 </View>
+            </View>
+             {/* ✅ APK DOWNLOAD BUTTON */}
+             <View className="px-7 mt-4">
+                <Button
+                    title="Download TrainerHub APK"
+                    onPress={() => Linking.openURL('https://drive.google.com/uc?export=download&id=1l4WFjcbDLk1kUoimd7a4CDaZYMy19v-W')}
+                    color="#007AFF"
+                />
             </View>
         </SafeAreaView>
         // <View className="flex-1 px-6 bg-white">
