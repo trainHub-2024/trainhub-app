@@ -393,7 +393,7 @@ export async function getTrainers({
   try {
     console.log("fetch trainers in " + location);
     const buildQuery = [
-      Query.equal("location",location),
+      Query.equal("location", location),
       Query.orderDesc("score"),
       Query.equal("isDisabled", false),
     ];
@@ -1198,6 +1198,46 @@ export async function createAppealNotice({ profileId }: { profileId: string }) {
       trainerProfile_id: profileId,
       type: "appeal",
     }
+  );
+
+  return true;
+}
+
+export async function createSportSubmission({
+  profileId,
+  newSport,
+  role,
+}: {
+  profileId: string;
+  newSport: string;
+  role: UserRoleType;
+}) {
+  console.log("CREATE Sport Submission...");
+  console.log(profileId);
+
+  const text = "Sent an appeal to add another sport of " + newSport;
+
+  console.log({
+    profileId,
+    newSport,
+  });
+
+  let body: any = {
+    text,
+    type: "sport",
+  };
+
+  if (role === "trainee") {
+    body = { ...body, userProfile_id: profileId };
+  } else {
+    body = { ...body, trainerProfile_id: profileId };
+  }
+
+  await databases.createDocument(
+    config.databaseId!,
+    config.adminRequestCollectionId!,
+    ID.unique(),
+    body
   );
 
   return true;
