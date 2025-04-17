@@ -98,7 +98,7 @@ const MyProfile = () => {
             }
         } catch (error) {
             console.error("Updating error:", error);
-            Alert.alert("Something went wrong!");
+            Alert.alert("Oops Something went wrong here, contact support or try again");
         } finally {
             setisSubmitting(false);
         }

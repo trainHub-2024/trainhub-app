@@ -49,7 +49,7 @@ const TrainerCredentials = () => {
             router.push("/profile");
         } catch (e: any) {
             console.log(e);
-            Alert.alert("Error", "An error occurred");
+            Alert.alert("Error", "Oops Something went wrong here, contact support or try again");
         } finally {
             setIsLoading(false);
         }
