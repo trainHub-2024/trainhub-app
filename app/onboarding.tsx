@@ -55,7 +55,7 @@ const Onboarding = () => {
                 }
 
             } catch (error: any) {
-                Alert.alert("Error", error.message);
+                Alert.alert("Error", "Oops Something went wrong here, contact support or try again");
             } finally {
                 setSubmitting(false);
             }

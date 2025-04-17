@@ -69,7 +69,7 @@ const Booking = () => {
             }
         } catch (error) {
             console.error("Booking error:", error);
-            Alert.alert("Something went wrong!");
+            Alert.alert("Oops Something went wrong here, contact support or try again");
         } finally {
             setIsLoading(false);
         }
