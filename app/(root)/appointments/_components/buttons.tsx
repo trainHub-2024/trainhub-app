@@ -268,6 +268,8 @@ const TraineeButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
         setModalVisible(!isModalVisible);
     };
 
+    console.log("RATING: " + data?.rating)
+
     async function handleCancel() {
         Alert.alert(
             "Cancel Appointment",
@@ -303,8 +305,6 @@ const TraineeButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
     const trainerId = data?.trainerProfile?.trainerProfile_id?.$id
     const traineeId = data?.userProfile?.userProfile_id?.$id
 
-    console.log(trainerId)
-    console.log(traineeId)
 
     return (
         <>
@@ -322,13 +322,18 @@ const TraineeButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
 
             {status === "completed" && !data.isConfirmedPayment && (
                 <>
-                    {isPaid ? <View className='w-full px-6 py-4 bg-white rounded-lg'>
-                        <Text className='text-xl text-primary font-poppinsBold'>Waiting for confirmation...</Text>
-                        <Text className='text-sm font-poppins text-muted-foreground'>Please wait or message the trainer to inform them about your payment</Text>
-                        <View className='w-full mt-4'>
-                            <RatingModal trainerId={data.trainerProfile?.trainerProfile_id?.$id} userId={data.userProfile?.userProfile_id?.$id} appointmentId={id} />
-                        </View>
-                    </View> :
+                    {isPaid ? (
+                        <>
+                            {data?.rating ? (
+                                <View className='w-full px-6 py-4 bg-white rounded-lg'>
+                                    <Text className='text-xl text-primary font-poppinsBold'>Ratings</Text>
+                                    <Text className='text-sm font-poppins text-muted-foreground'>You have rated this at a {data.rating.rating}/5</Text>
+                                </View>
+                            ) : (
+                                <RatingModal trainerId={trainerId} userId={traineeId} appointmentId={id} />
+                            )}
+                        </>
+                    ) :
                         <PayButton handleChange={handlePay} isLoading={isLoading} />
                     }
                 </>
@@ -348,12 +353,6 @@ const TraineeButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
         </>
     )
 }
-
-
-
-
-
-
 
 const AppointmentButtons = ({ data, refetch }: { data: Appointment; refetch: () => void }) => {
     const { user } = useGlobalContext();

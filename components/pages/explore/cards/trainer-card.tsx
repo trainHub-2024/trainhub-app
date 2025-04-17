@@ -10,20 +10,19 @@ const TrainerCard = ({ item }: { item: any }) => {
     const totalRating = item?.ratings?.reduce((acc: any, curr: any) => acc + curr.rating, 0);
     const averageRating = item?.ratings?.length > 0 ? totalRating / item.ratings.length : 0;
 
-    console.log(item?.avatar)
     return (
         <TouchableOpacity
             onPress={() => router.push(`/trainers/${item.user_id}`)}
             className="w-full px-6 py-4 border"
             style={{ height: 160, borderRadius: 12, backgroundColor: "#fb8500" }}
         >
-            <View className='flex-row justify-between items-center gap-2'>
+            <View className='flex-row items-center justify-between gap-2'>
                 <View className='justify-between h-full'>
                     <View>
-                        <Text className="text-xl font-poppinsBold text-white">{item.name}</Text>
+                        <Text className="text-xl text-white font-poppinsBold">{item.name}</Text>
                         <View className='mt-1'>
                             {item.sports?.length > 0 ?
-                                <View className='flex justify-start items-start'>
+                                <View className='flex items-start justify-start'>
                                     <View className='px-2 py-0 border rounded-full '>
                                         <Text className='text-sm font-poppins'>{item.sports.map((s: Sport) => s.name).join("")}</Text>
                                     </View>
@@ -33,7 +32,7 @@ const TrainerCard = ({ item }: { item: any }) => {
                             }
                         </View>
                     </View>
-                    <View className='gap-1 justify-start items-start'>
+                    <View className='items-start justify-start gap-1'>
                         <View className='px-2 py-0.5 flex-row gap-1 bg-white rounded-full justify-start items-center'>
                             <Image source={icons.calendar} tintColor={"#f97316"} resizeMode='contain' className='size-6' />
                             <Text className='text-sm font-poppinsMedium text-primary'>{formatTimeRange(item.startTime, item.endTime)}</Text>
