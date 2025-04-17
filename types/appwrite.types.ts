@@ -18,3 +18,20 @@ export interface Appointment extends Models.Document {
   timeSlot?: string;
   duration?: number;
 }
+
+export interface AppointmentShort extends Models.Document {
+  date: string;
+  duration: number;
+  isConfirmedPayment: boolean;
+  isPenalized: boolean;
+  notes: string;
+  paymentDate: string;
+  paymentImage: string;
+  paymentMethod?: "online" | "cash";
+  price: number;
+  status: string;
+  timeSlot: string;
+  trainerProfile_id: string;
+  userProfile_id: string;
+  venue: string;
+}

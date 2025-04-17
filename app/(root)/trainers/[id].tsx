@@ -11,6 +11,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { useGlobalContext } from "@/lib/global-provider";
 import icons from "@/constants/icons";
 import { computeLevel } from "@/utils";
+import { AppointmentShort } from "@/types/appwrite.types";
 
 const Trainer = () => {
     const { user } = useGlobalContext();
@@ -22,6 +23,7 @@ const Trainer = () => {
     });
 
     const workDays = trainer?.trainerProfile_id?.workDays || [];
+    const appointments: AppointmentShort[] = trainer?.trainerProfile_id?.appointments ?? []
 
 
     // Generate 30-minute time slots for the selected day
@@ -146,6 +148,7 @@ const Trainer = () => {
                     </View>
 
                     <CalendarBooking
+                        appointments={appointments}
                         timeSlots={timeSlots}
                         handleSelectTimeSlot={handleSelectTimeSlot}
                         workDays={workDays}
