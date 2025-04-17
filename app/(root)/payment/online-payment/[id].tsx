@@ -50,33 +50,35 @@ const OnlinePayment = () => {
         }
     };
 
+
+
     if (loading || paymentLoading) {
         return (
-            <View className="flex-1 justify-center items-center p-4 bg-gray-100">
+            <View className="items-center justify-center flex-1 p-4 bg-gray-100">
                 <ActivityIndicator size="large" color="#0000ff" />
-                <Text className="text-lg mt-4">{paymentLoading ? "Processing Payment..." : "Loading..."}</Text>
+                <Text className="mt-4 text-lg">{paymentLoading ? "Processing Payment..." : "Loading..."}</Text>
             </View>
         );
     }
 
     return (
-        <View className="flex-1 justify-center items-center p-4 bg-gray-100">
-            <Text className="text-3xl font-bold mb-8">Online Payment</Text>
-            <View className="bg-white p-6 rounded-lg shadow-md w-3/4 items-center">
-                <Text className="text-lg mb-4">Scan the QR Code</Text>
+        <View className="items-center justify-center flex-1 p-4 bg-gray-100">
+            <Text className="mb-8 text-3xl font-bold">Online Payment</Text>
+            <View className="items-center w-3/4 p-6 bg-white rounded-lg shadow-md">
+                <Text className="mb-4 text-lg">Scan the QR Code</Text>
                 <Image
-                    source={{ uri: appointment?.trainerProfile?.qrCodePayment }} // Replace with your QR code image URL
+                    source={{ uri: appointment?.trainerProfile?.trainerProfile_id?.qrCodePayment }} // Replace with your QR code image URL
                     style={{ width: 200, height: 200, marginBottom: 20 }}
                 />
-                <Text className="text-lg mb-4">Amount to be Paid: {appointment?.trainerProfile?.trainingPrice}</Text>
+                <Text className="mb-4 text-lg">Amount to be Paid: {appointment?.trainerProfile?.trainingPrice}</Text>
                 <TouchableOpacity
-                    className="flex-row items-center bg-primary p-4 rounded-lg w-full justify-center"
+                    className="flex-row items-center justify-center w-full p-4 rounded-lg bg-primary"
                     onPress={handleUploadPayment}
                 >
-                    <Text className="text-white text-lg">Upload Payment</Text>
+                    <Text className="text-lg text-white">Upload Payment</Text>
                 </TouchableOpacity>
                 {appointment?.trainerProfile?.contactNumber && (
-                    <Text className="text-red-500 text-sm mt-4">
+                    <Text className="mt-4 text-sm text-red-500">
                         If the QR code is not working, please send your GCash to {appointment.trainerProfile.contactNumber}
                     </Text>
                 )}

@@ -349,12 +349,6 @@ const TraineeButtons = ({ data, refetch }: { data: Appointment; refetch: () => v
     )
 }
 
-
-
-
-
-
-
 const AppointmentButtons = ({ data, refetch }: { data: Appointment; refetch: () => void }) => {
     const { user } = useGlobalContext();
     const userRole = user?.role;

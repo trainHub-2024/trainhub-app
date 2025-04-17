@@ -26,6 +26,8 @@ const CompletedAppointments = ({ selectedDate }: { selectedDate: Date }) => {
         refetch({ filter: selectedDate.toISOString(), query: params.search! });
     }, [params.search, selectedDate])
 
+    console.log(appointmentsData);
+
     return (
         <>
             {/* Training Appointments */}

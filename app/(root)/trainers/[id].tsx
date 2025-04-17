@@ -83,8 +83,8 @@ const Trainer = () => {
     return (
         <SafeAreaView className="flex-1 bg-primary">
             <View className="bg-primary" style={{ height: 100, position: "relative" }}>
-                <View className="rounded-full border-4 z-10 border-white bg-white absolute -bottom-16 left-1/2 -translate-x-1/2" style={{ width: 120, height: 120 }}>
-                    <Image source={{ uri: trainer?.avatar }} className="size-full rounded-full" />
+                <View className="absolute z-10 -translate-x-1/2 bg-white border-4 border-white rounded-full -bottom-16 left-1/2" style={{ width: 120, height: 120 }}>
+                    <Image source={{ uri: trainer?.avatar }} className="rounded-full size-full" />
                     {trainer?.trainerProfile_id?.isCertified && (
                         <View className="absolute bottom-0 right-0">
                             <FontAwesome name={"check-circle"} size={28} color={"#fb8500"} />
@@ -92,16 +92,16 @@ const Trainer = () => {
                     )}
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false} className="h-full bg-white pt-16">
+            <ScrollView showsVerticalScrollIndicator={false} className="h-full pt-16 bg-white">
                 <View className="flex-1 px-6 pb-10">
 
-                    <Text className="text-center font-poppinsBold text-2xl pt-4 text-primary">{trainer?.username}</Text>
+                    <Text className="pt-4 text-2xl text-center font-poppinsBold text-primary">{trainer?.username}</Text>
 
                     <View className="px-10 mt-2">
                         <Text className="text-center font-poppins">{trainer?.trainerProfile_id?.bio}</Text>
                     </View>
 
-                    <View className="flex-row justify-center items-center gap-4 mt-2">
+                    <View className="flex-row items-center justify-center gap-4 mt-2">
                         <View className="flex-row gap-1">
                             <FontAwesome name="map" size={16} color={"#fb8500"} />
                             <Text className="text-base text-muted-foreground font-poppins">{trainer?.trainerProfile_id?.location}</Text>
@@ -113,13 +113,13 @@ const Trainer = () => {
                     </View>
 
                     <View className="mt-4">
-                        <Text className="text-center text-4xl font-poppinsBold text-primary">${trainer?.trainerProfile_id?.trainingPrice}</Text>
+                        <Text className="text-4xl text-center font-poppinsBold text-primary">${trainer?.trainerProfile_id?.trainingPrice}</Text>
                     </View>
 
-                    <View className="flex-row gap-2 justify-center items-center my-6">
-                        <TouchableOpacity onPress={handleCreateChat} className="flex justify-center gap-2 items-center flex-row bg-primary h-14 rounded-full flex-1">
+                    <View className="flex-row items-center justify-center gap-2 my-6">
+                        <TouchableOpacity onPress={handleCreateChat} className="flex flex-row items-center justify-center flex-1 gap-2 rounded-full bg-primary h-14">
                             <FontAwesome name="send" size={20} color={"white"} />
-                            <Text className="font-poppinsBold text-white text-xl">Message</Text>
+                            <Text className="text-xl text-white font-poppinsBold">Message</Text>
                         </TouchableOpacity>
                     </View>
 
