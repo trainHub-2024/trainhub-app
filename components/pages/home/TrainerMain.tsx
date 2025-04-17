@@ -100,6 +100,13 @@ const HomeTrainerMain = () => {
                             <Text style={styles.cardSubtext}></Text>
                         </View>
                     </View>
+                    <View className="mt-4 px-7">
+                        <Button
+                            title="Download TrainerHub APK"
+                            onPress={() => Linking.openURL('https://drive.google.com/uc?export=download&id=1l4WFjcbDLk1kUoimd7a4CDaZYMy19v-W')}
+                            color="#007AFF"
+                        />
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -137,13 +144,13 @@ const HomeTrainerMain = () => {
         //         </View>
         //     </View>
         //     {/* ✅ APK DOWNLOAD BUTTON */}
-        //     <View className="mt-4 px-7">
-        //         <Button
-        //             title="Download TrainerHub APK"
-        //             onPress={() => Linking.openURL('https://drive.google.com/uc?export=download&id=1l4WFjcbDLk1kUoimd7a4CDaZYMy19v-W')}
-        //             color="#007AFF"
-        //         />
-        //     </View>
+        // <View className="mt-4 px-7">
+        //     <Button
+        //         title="Download TrainerHub APK"
+        //         onPress={() => Linking.openURL('https://drive.google.com/uc?export=download&id=1l4WFjcbDLk1kUoimd7a4CDaZYMy19v-W')}
+        //         color="#007AFF"
+        //     />
+        // </View>
         // </SafeAreaView>
     );
 };
