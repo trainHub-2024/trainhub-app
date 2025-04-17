@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAppwrite } from "@/lib/useAppwrite";
 import { creatInbox, getTrainerById } from "@/lib/appwrite";
@@ -9,6 +9,8 @@ import { format } from "date-fns";
 import CalendarBooking from "./_components/calendar";
 import { FontAwesome } from "@expo/vector-icons";
 import { useGlobalContext } from "@/lib/global-provider";
+import icons from "@/constants/icons";
+import { computeLevel } from "@/utils";
 
 const Trainer = () => {
     const { user } = useGlobalContext();
@@ -76,6 +78,15 @@ const Trainer = () => {
 
     const contactNumber = `${trainer?.trainerProfile_id?.contactNumber?.substring(0, 2)}xx xxx xxxx`
 
+    const score = trainer?.trainerProfile_id?.score ?? 0;
+    const ratings = trainer?.trainerProfile_id?.ratings ?? [];
+    const { totalRating, averageRating } = useMemo(() => {
+
+        const totalRating = ratings?.reduce((acc: any, curr: any) => acc + curr.rating, 0);
+        const averageRating = ratings?.length > 0 ? totalRating / ratings.length : 0;
+
+        return { totalRating, averageRating };
+    }, [ratings])
 
     if (loading) return null;
 
@@ -99,6 +110,17 @@ const Trainer = () => {
 
                     <View className="px-10 mt-2">
                         <Text className="text-center font-poppins">{trainer?.trainerProfile_id?.bio}</Text>
+                    </View>
+
+                    <View className='flex-row items-center justify-center gap-1'>
+                        <View className='px-2 py-0.5 flex-row gap-1 bg-white rounded-full justify-start items-center'>
+                            <Image source={icons.dumbell} tintColor={"#f97316"} resizeMode='contain' className='size-6' />
+                            <Text className="text-base text-muted-foreground font-poppins">Level {computeLevel(score)}</Text>
+                        </View>
+                        <View className='px-2 py-0.5 flex-row gap-1 bg-white rounded-full justify-start items-center'>
+                            <FontAwesome name="star" size={16} color={"#fb8500"} />
+                            <Text className="text-base text-muted-foreground font-poppins">{averageRating.toFixed(2)} stars</Text>
+                        </View>
                     </View>
 
                     <View className="flex-row items-center justify-center gap-4 mt-2">
