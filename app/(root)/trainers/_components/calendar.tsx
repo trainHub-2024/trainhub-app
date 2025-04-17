@@ -1,9 +1,16 @@
 import React, { useState } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { addDays, format, isAfter, isBefore, isSameDay, parse } from 'date-fns'
+import { AppointmentShort } from '@/types/appwrite.types';
+import { useGlobalContext } from '@/lib/global-provider';
+import { COLORS } from '@/utils';
+import { router } from 'expo-router';
 
-const CalendarBooking = ({ workDays, timeSlots, handleSelectTimeSlot }:
-    { workDays: string[]; timeSlots: string[]; handleSelectTimeSlot: (e: string, f: Date) => void }) => {
+const CalendarBooking = ({ workDays, timeSlots, handleSelectTimeSlot, appointments }:
+    { workDays: string[]; timeSlots: string[]; appointments: AppointmentShort[]; handleSelectTimeSlot: (e: string, f: Date) => void }) => {
+
+    const { user } = useGlobalContext();
+    console.log(user?.$id);
 
     const today = new Date();
     const nextWorkDays = Array.from({ length: 14 }, (_, i) => addDays(today, i)) // Check 14 days ahead
@@ -28,13 +35,25 @@ const CalendarBooking = ({ workDays, timeSlots, handleSelectTimeSlot }:
         return isBefore(slotDate, currentDateTime);
     };
 
+    const hasBooked = (currDate: Date) => {
+        const appointment = appointments.find((a) => {
+            const date = new Date(a.date);
+
+            if (isSameDay(date, currDate) && a.userProfile_id === user?.profile?.$id) {
+                return a;
+            }
+        })
+        return appointment;
+    }
+
+    const bookedAppointment = hasBooked(selectedDate);
 
     return (
         <View className='gap-2'>
             <View className="p-4 mt-4 bg-muted rounded-2xl">
-                <Text className="text-lg font-semibold text-center font-poppinsMedium">Select a Day</Text>
+                {/* <Text className="text-lg font-semibold text-center font-poppinsMedium">Select a Day</Text> */}
 
-                <View className="flex-row items-center justify-between mt-4">
+                <View className="flex-row items-center justify-between">
                     {/* Previous Button */}
                     <TouchableOpacity
                         onPress={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
@@ -63,20 +82,39 @@ const CalendarBooking = ({ workDays, timeSlots, handleSelectTimeSlot }:
 
             {selectedDate && (
                 <View className="p-4 mt-4 bg-gray-100 rounded-2xl">
-                    <Text className="text-lg font-poppinsBold text-center">
+                    <Text className="text-lg text-center font-poppinsBold">
                         Time Slots for {format(selectedDate, "EEEE, MMMM d")}
                     </Text>
-                    <View className="flex-row flex-wrap gap-2 mt-2 justify-center">
+                    {bookedAppointment && (
+                        <Text className="text-sm text-center font-poppins">
+                            Already booked at {bookedAppointment.timeSlot}
+                        </Text>
+                    )}
+                    <View className="flex-row flex-wrap justify-center gap-2 mt-2">
                         {timeSlots.map((slot, index) => {
-                            const isDisabled = isPastSlot(slot); // Check if the slot is in the past
+                            const isDisabled = isPastSlot(slot) || !!bookedAppointment;
+
+                            const isSlotSameWithBookedAppointment = slot === bookedAppointment?.timeSlot;
+
                             return (
                                 <TouchableOpacity
                                     key={index}
-                                    onPress={() => !isDisabled && handleSelectTimeSlot(slot, selectedDate)}
-                                    className={`px-3 py-2 rounded-full ${isDisabled ? "bg-gray-300" : "bg-primary"}`}
-                                    disabled={isDisabled} // Disable button if the slot is in the past
+                                    onPress={() => {
+                                        if (isDisabled && isSlotSameWithBookedAppointment && bookedAppointment) {
+                                            router.push(`/appointments/${bookedAppointment.$id}`)
+                                        } else {
+                                            handleSelectTimeSlot(slot, selectedDate)
+                                        }
+                                    }}
+                                    className={`px-3 py-2 rounded-full 
+                                        ${isDisabled ? isSlotSameWithBookedAppointment ? "bg-green-500" : "bg-gray-300"
+                                            : "bg-primary"}
+                                        `}
+                                    disabled={isDisabled && !isSlotSameWithBookedAppointment} // Disable button if the slot is in the past
                                 >
-                                    <Text className={`text-white font-poppins ${isDisabled ? "text-gray-500" : ""}`}>{slot}</Text>
+                                    <Text className={`text-white font-poppins 
+                                        ${isDisabled ? isSlotSameWithBookedAppointment ? "text-green-200" : "text-gray-500" : ""}
+                                        `}>{slot}</Text>
                                 </TouchableOpacity>
                             );
                         })}
