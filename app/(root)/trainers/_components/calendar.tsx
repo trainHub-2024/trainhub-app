@@ -35,7 +35,7 @@ const CalendarBooking = ({ workDays, timeSlots, handleSelectTimeSlot, appointmen
         return isBefore(slotDate, currentDateTime);
     };
 
-    const hasBooked = (currDate: Date) => {
+    const hasCurrentUserBooked = (currDate: Date) => {
         const appointment = appointments.find((a) => {
             const date = new Date(a.date);
 
@@ -46,7 +46,19 @@ const CalendarBooking = ({ workDays, timeSlots, handleSelectTimeSlot, appointmen
         return appointment;
     }
 
-    const bookedAppointment = hasBooked(selectedDate);
+    const hasAnotherUserBooked = (currDate: Date) => {
+        const appointment = appointments.find((a) => {
+            const date = new Date(a.date);
+
+            if (isSameDay(date, currDate)) {
+                return a;
+            }
+        })
+        return appointment;
+    }
+
+    const bookedAppointment = hasCurrentUserBooked(selectedDate);
+    const anotherUserOccupies = hasAnotherUserBooked(selectedDate);
 
     return (
         <View className='gap-2'>
@@ -92,7 +104,9 @@ const CalendarBooking = ({ workDays, timeSlots, handleSelectTimeSlot, appointmen
                     )}
                     <View className="flex-row flex-wrap justify-center gap-2 mt-2">
                         {timeSlots.map((slot, index) => {
-                            const isDisabled = isPastSlot(slot) || !!bookedAppointment;
+                            const anotherUserOccupiesTimeSlot = !!anotherUserOccupies && anotherUserOccupies.timeSlot === slot;
+
+                            const isDisabled = isPastSlot(slot) || !!bookedAppointment || anotherUserOccupiesTimeSlot;
 
                             const isSlotSameWithBookedAppointment = slot === bookedAppointment?.timeSlot;
 
